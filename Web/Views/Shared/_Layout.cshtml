@@ -64,7 +64,7 @@
                         <text>
                             @using (Html.BeginForm("SignOut", "Account", FormMethod.Post, htmlDic))
                             {
-                                <a class="btn btn-info">Hello, @User.Identity.Name</a>
+                                <a data-toggle="modal" class="btn btn-info" href="#profile">Hello, @User.Identity.Name</a>
                                 <span>|</span>
                                 @Html.AntiForgeryToken()
                                 <a href="javascript:document.getElementById('signOutForm').submit()" class="btn btn-danger">Sign Out</a>
@@ -86,11 +86,34 @@
       </div>
     </div>
 
+    @if (Request.IsAuthenticated)
+    {
+        <text>
+    <div class="container">
+        <div id="profile" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Your Profile</h4>
+                    </div>
+                    <div class="modal-body">
+                        @User.Identity.Name
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </text>
+    }
+
     @Scripts.Render("~/bundles/js")
 
     <script>
         $(function () {
-
+           
         });
     </script>
     @RenderSection("scripts", required: false)
