@@ -9,18 +9,18 @@ namespace Web.Models
     public class InMemoryRoleProvider
         : RoleProvider
     {
-        IDictionary<string, string[]> _userRoleDic;
+        
 
         public InMemoryRoleProvider()
         {
-            _userRoleDic = new Dictionary<string, string[]>();
+            
         }
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
             foreach (var username in usernames)
             {
-                _userRoleDic.Add(username, roleNames);
+                MvcApplication.UserRoleDic.Add(username, roleNames);
             }
         }
 
@@ -58,8 +58,8 @@ namespace Web.Models
 
         public override string[] GetRolesForUser(string username)
         {
-            if (_userRoleDic.ContainsKey(username))
-                return _userRoleDic[username];
+            if (MvcApplication.UserRoleDic.ContainsKey(username))
+                return MvcApplication.UserRoleDic[username];
 
             return null;
         }
@@ -71,8 +71,8 @@ namespace Web.Models
 
         public override bool IsUserInRole(string username, string roleName)
         {
-            if(_userRoleDic.ContainsKey(username))
-                return _userRoleDic[username].Contains(roleName);
+            if (MvcApplication.UserRoleDic.ContainsKey(username))
+                return MvcApplication.UserRoleDic[username].Contains(roleName);
 
             return false;
         }

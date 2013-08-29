@@ -9,22 +9,10 @@ namespace Web.Models
     public class InMemoryMembershipProvider 
         : MembershipProvider
     {
-        IDictionary<string, User> _members = null;
 
         public InMemoryMembershipProvider()
         {
-            _members = new Dictionary<string, User>();
-
-            var chavp = new User
-            {
-                Name = "#:P",
-                Email = "my.parinya@gmail.com",
-                Password = "123456789".GetHashCode().ToString(),
-            };
-
-            _members.Add(chavp.Name, chavp);
-
-            Roles.AddUserToRoles(chavp.Name, new string[]{"admin"});
+            
         }
 
         public override string ApplicationName
@@ -71,7 +59,7 @@ namespace Web.Models
 
         public override MembershipUserCollection FindUsersByEmail(string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            var queryByEmails = (from u in _members.Values
+            var queryByEmails = (from u in MvcApplication.Members.Values
                                where u.Email == emailToMatch
                                select u).ToList();
 
@@ -183,9 +171,9 @@ namespace Web.Models
 
         public override bool ValidateUser(string username, string password)
         {
-            if (_members.ContainsKey(username))
+            if (MvcApplication.Members.ContainsKey(username))
             {
-                var user = _members[username];
+                var user = MvcApplication.Members[username];
                 if (user.Password == password.GetHashCode().ToString())
                 {
                     return true;
