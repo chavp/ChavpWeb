@@ -14,13 +14,14 @@ namespace Web.Models
         public InMemoryRoleProvider()
         {
             _userRoleDic = new Dictionary<string, string[]>();
-
-            _userRoleDic.Add("my.parinya@gmail.com", new string[] { });
         }
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
-            throw new NotImplementedException();
+            foreach (var username in usernames)
+            {
+                _userRoleDic.Add(username, roleNames);
+            }
         }
 
         public override string ApplicationName

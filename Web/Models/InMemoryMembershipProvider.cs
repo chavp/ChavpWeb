@@ -14,16 +14,17 @@ namespace Web.Models
         public InMemoryMembershipProvider()
         {
             _members = new Dictionary<string, User>();
-            _members.Add("my.parinya@gmail.com", new User
+
+            var chavp = new User
             {
                 Name = "#:P",
                 Email = "my.parinya@gmail.com",
                 Password = "123456789".GetHashCode().ToString(),
-                Roles = new List<string>
-                {
-                    "Admin",
-                }
-            });
+            };
+
+            _members.Add(chavp.Name, chavp);
+
+            Roles.AddUserToRoles(chavp.Name, new string[]{"admin"});
         }
 
         public override string ApplicationName
@@ -70,7 +71,24 @@ namespace Web.Models
 
         public override MembershipUserCollection FindUsersByEmail(string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
-            throw new NotImplementedException();
+            var queryByEmails = (from u in _members.Values
+                               where u.Email == emailToMatch
+                               select u).ToList();
+
+            totalRecords = queryByEmails.Count;
+
+            var results = new MembershipUserCollection();
+            queryByEmails.ForEach(u =>
+            {
+                results.Add(
+                    new MembershipUser("InMemoryMembershipProvider", 
+                        u.Name, null, 
+                        u.Email, null, 
+                        null, true, false, 
+                        DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now));
+            });
+
+            return results;
         }
 
         public override MembershipUserCollection FindUsersByName(string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)

@@ -16,11 +16,17 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(string email, string password)
         {
-            if (Membership.ValidateUser(email, password))
+            var members = Membership.FindUsersByEmail(email);
+            var enu = members.GetEnumerator();
+            if (enu.MoveNext())
             {
-                FormsAuthentication.SetAuthCookie(email, false);
-            }
+                var firstUser = enu.Current as MembershipUser;
 
+                if (Membership.ValidateUser(firstUser.UserName, password))
+                {
+                    FormsAuthentication.SetAuthCookie(firstUser.UserName, false);
+                }
+            }
 
             return RedirectToAction("Index", "Home");
         }

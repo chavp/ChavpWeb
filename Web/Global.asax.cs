@@ -25,5 +25,7 @@ namespace Web
 
             BootstrapConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        
     }
 }
