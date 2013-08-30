@@ -25,6 +25,7 @@ namespace Web.Controllers
                 if (Membership.ValidateUser(firstUser.UserName, password))
                 {
                     FormsAuthentication.SetAuthCookie(firstUser.UserName, false);
+
                 }
             }
 

@@ -44,6 +44,18 @@ namespace Web
             UserRoleDic.Add(chavp.Name, new string[]{"admin"});
         }
 
-        
+        void Session_Start(object sender, EventArgs e)
+        {
+            if (HttpContext.Current.Request.IsAuthenticated)
+            {
+
+                //old authentication, kill it
+                FormsAuthentication.SignOut();
+                //or use Response.Redirect to go to a different page
+                FormsAuthentication.RedirectToLoginPage("Session=Expired");
+                HttpContext.Current.Response.End();
+            }
+
+        }
     }
 }
