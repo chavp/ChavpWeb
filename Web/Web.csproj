@@ -140,8 +140,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Feature.cs" />
     <Compile Include="Models\InMemoryMembershipProvider.cs" />
     <Compile Include="Models\InMemoryRoleProvider.cs" />
+    <Compile Include="Models\Product.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

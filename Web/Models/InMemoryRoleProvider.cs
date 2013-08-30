@@ -59,8 +59,10 @@ namespace Web.Models
         public override string[] GetRolesForUser(string username)
         {
             if (MvcApplication.UserRoleDic.ContainsKey(username))
-                return MvcApplication.UserRoleDic[username];
-
+            {
+                var roles = MvcApplication.UserRoleDic[username].ToArray();
+                return roles;
+            }
             return null;
         }
 

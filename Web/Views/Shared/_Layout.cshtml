@@ -5,106 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../Content/bootstrap-3.0.0/assets/js/html5shiv.js"></script>
+      <script src="../../Content/bootstrap-3.0.0/assets/js/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
+    <div id="wrap">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Agile Studio</a>
+                </div>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Agile Studio</a>
-            </div>
-
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    @if (Request.IsAuthenticated)
-                    {
-                        if (User.IsInRole("Admin"))
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        @if (Request.IsAuthenticated)
                         {
+                            if (User.IsInRole("Admin"))
+                            {
                             <text>
-                            <li><a href="#userStories">User Stories</a></li>
+                            <li><a href="#products">Products</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#sourceCode">Source Code</a></li>
                             <li><a href="#buildJobs">Build Jobs</a></li>
+                            <li><a href="#testJobs">Test Jobs</a></li>
                             <li><a href="#deployJobs">Deploy Jobs</a></li>
                             <li><a href="#scheduleJobs">Schedule Jobs</a></li>
                             </text>
+                            }
                         }
-                    }
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-
-                @{
-                    var htmlDic = new Dictionary<string, object>();
-                    htmlDic.Add("class", "navbar-form navbar-right");
-                    if (!Request.IsAuthenticated)
-                    {
-                        htmlDic.Add("id", "signInForm");
-                        using (Html.BeginForm("SignIn", "Account", FormMethod.Post, htmlDic))
+                        else
                         {
                             <text>
-                            <div class="form-group">
-                                <input type="text" placeholder="Email" class="form-control" name="Email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" placeholder="Password" class="form-control" name="Password">
-                            </div>
-                            @Html.AntiForgeryToken()
-                            <a href="javascript:document.getElementById('signInForm').submit()" class="btn btn-success">Sign in</a>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
                             </text>
                         }
-                    }
-                    else
-                    {
-                        htmlDic.Add("id", "signOutForm");
-                        <text>
-                            @using (Html.BeginForm("SignOut", "Account", FormMethod.Post, htmlDic))
+                    </ul>
+
+                    @{
+                        var htmlDic = new Dictionary<string, object>();
+                        htmlDic.Add("class", "navbar-form navbar-right");
+                        if (!Request.IsAuthenticated)
+                        {
+                            htmlDic.Add("id", "signInForm");
+                            using (Html.BeginForm("SignIn", "Account", FormMethod.Post, htmlDic))
                             {
-                                <a data-toggle="modal" class="btn btn-info" href="#profile">Hello, @User.Identity.Name</a>
-                                <span>|</span>
-                                @Html.AntiForgeryToken()
-                                <a href="javascript:document.getElementById('signOutForm').submit()" class="btn btn-danger">Sign Out</a>
-                            }
+                        <text>
+                        <div class="form-group">
+                            <input type="text" placeholder="Email" class="form-control" name="Email" />
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" class="form-control" name="Password" />
+                        </div>
+                        @Html.AntiForgeryToken()
+                        <a href="javascript:document.getElementById('signInForm').submit()" class="btn btn-success">Sign in</a>
                         </text>
+                            }
+                        }
+                        else
+                        {
+                            htmlDic.Add("id", "signOutForm");
+                        <text>
+                        @using (Html.BeginForm("SignOut", "Account", FormMethod.Post, htmlDic))
+                        {
+                            <a data-toggle="modal" class="btn btn-info" href="#profile" data-bind="attr: {title: Roles}">Hello, <span data-bind="text: Name"></span></a>
+                            <span>|</span>
+                            @Html.AntiForgeryToken()
+                            <a href="javascript:document.getElementById('signOutForm').submit()" class="btn btn-danger">Sign Out</a>
+                        }
+                        </text>
+                        }
                     }
-                }
+                </div>
             </div>
+        </div>
+
+        <div class="container">
+            <div class="page-header">
+                <h1>@ViewBag.Title</h1>
+            </div>
+            @RenderBody()
         </div>
     </div>
 
-    <div class="container">
-        @RenderBody()
-    </div>
-
     <div id="footer">
-      <div class="container">
-        <h6>© By #:P</h6>
-      </div>
+        <div class="container">
+            <p class="text-muted credit">© By <a href="http://chavp.wordpress.com" target="_blank">#:P</a></p>
+        </div>
     </div>
 
     @if (Request.IsAuthenticated)
     {
         <text>
-    <div class="container">
-        <div id="profile" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Your Profile</h4>
-                    </div>
-                    <div class="modal-body">
-                        @User.Identity.Name
-                    </div>
-                    <div class="modal-footer">
+        <div class="container">
+            <div id="profile" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Your Card</h4>
+                        </div>
+                        <div class="modal-body">
+                            My name is <span class="label label-info" data-bind="text: Name"></span>
+                            <br />
+                            I'am <span class="label label-info" data-bind="text: Roles"></span>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
         </text>
     }
@@ -113,7 +133,16 @@
 
     <script>
         $(function () {
-           
+            function UserViewModel() {
+                this.Name = ko.observable();
+                this.Roles = ko.observable();
+            }
+
+            var userVM = new UserViewModel();
+            userVM.Name("@User.Identity.Name");
+            userVM.Roles("@string.Join(",", @Roles.GetRolesForUser())");
+
+            ko.applyBindings(userVM);
         });
     </script>
     @RenderSection("scripts", required: false)
