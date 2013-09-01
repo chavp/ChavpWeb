@@ -1,0 +1,99 @@
+﻿@model IList<Web.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<div class="well well-sm">
+    <div class="btn-toolbar">
+        <a data-toggle="modal" href="#new-product" class="btn btn-primary">New Product</a>
+    
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>CodeName</th>
+                    <th>Brand</th>
+                    <th>Name</th>
+                    <th>Slogan</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <text>
+                    <tr>
+                        <td>@p.CodeName</td>
+                        <td>@p.Brand</td>
+                        <td>@p.Name</td>
+                        <td>@p.Slogan</td>
+                        <td><span class="label label-warning">@p.Status</span></td>
+                        <td>
+                            <a href="#edit-product"><span class="glyphicon glyphicon-edit"></span></a>
+                            <a href="#" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
+                        </td>
+                    </tr>
+                    </text>
+                }
+            </tbody>
+        </table>
+    </div>
+    <ul class="pagination">
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li class="disabled"><a href="#">&raquo;</a></li>
+    </ul>
+</div>
+
+<div id="new-product" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">New Product</h4>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control active" id="inputCodeName" placeholder="Code Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputBrand" class="col-lg-3 control-label">Brand</label>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" id="inputBrand" placeholder="Brand" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-3 control-label">Name</label>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" id="inputName" placeholder="Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputSlogan" class="col-lg-3 control-label">Slogan</label>
+                        <div class="col-lg-9">
+                            <input type="text" class="form-control" id="inputSlogan" placeholder="Slogan" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="edit-product">
+
+</div>
