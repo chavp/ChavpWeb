@@ -12,6 +12,13 @@ namespace Web.Models
         public string Name { get; set; }
         public string Slogan { get; set; }
         public EProductStatus Status { get; set; }
+        public string StatusDisplay
+        {
+            get
+            {
+                return Status.ToString();
+            }
+        }
 
         public IList<Feature> Features { get; set; }
     }

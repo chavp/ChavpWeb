@@ -1,13 +1,18 @@
-﻿@model IList<Web.Models.Product>
+﻿@using Newtonsoft.Json
+
+@model IList<Web.Models.Product>
 
 @{
     ViewBag.Title = "Products";
 }
 
-<div class="well well-sm">
+<style>
+    .ui-effects-transfer { border: 2px dotted gray; }
+</style>
+
+<div id="product-list" class="well well-sm">
     <div class="btn-toolbar">
-        <a data-toggle="modal" href="#new-product" class="btn btn-primary">New Product</a>
-    
+        <a data-toggle="modal" href="#new-product" class="btn btn-primary" data-bind="click: newProduct">New Product</a>
     </div>
     <div class="table-responsive">
         <table class="table table-condensed table-hover">
@@ -21,38 +26,40 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var p in Model)
-                {
-                    <text>
-                    <tr>
-                        <td>@p.CodeName</td>
-                        <td>@p.Brand</td>
-                        <td>@p.Name</td>
-                        <td>@p.Slogan</td>
-                        <td><span class="label label-warning">@p.Status</span></td>
-                        <td>
-                            <a href="#edit-product"><span class="glyphicon glyphicon-edit"></span></a>
-                            <a href="#" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
-                        </td>
-                    </tr>
-                    </text>
-                }
+            <tbody data-bind="foreach: Products">
+                <tr data-bind="attr: { id: CodeName }">
+                    <td><span data-bind="text: CodeName"></span></td>
+                    <td><span data-bind="text: Brand"></span></td>
+                    <td><span data-bind="text: Name"></span></td>
+                    <td><span data-bind="text: Slogan"></span></td>
+                    <td><span class="label label-warning" data-bind="text: Status"></span></td>
+                    <td>
+                        <a data-toggle="modal" href="#edit-product" data-bind="click: $parent.edit"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a href="#remove-product" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
+                    </td>
+                </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <ul class="pagination pagination-sm">
+                            <li class="disabled"><a href="#">&laquo;</a></li>
+                            <li class="active"><a href="#">1</a></li>
+                            <li class="disabled"><a href="#">&raquo;</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
-    <ul class="pagination">
-        <li class="disabled"><a href="#">&laquo;</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li class="disabled"><a href="#">&raquo;</a></li>
-    </ul>
+    
 </div>
 
-<div id="new-product" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="new-product" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-bind="click: close">&times;</button>
                 <h4 class="modal-title">New Product</h4>
             </div>
 
@@ -61,39 +68,269 @@
                     <div class="form-group">
                         <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
                         <div class="col-lg-9">
-                            <input type="text" class="form-control active" id="inputCodeName" placeholder="Code Name" />
+                            <div class="input-group">
+                            <span class="input-group-addon">P-</span>
+                            <input data-bind="value: CodeName" type="text" class="form-control active" id="inputCodeName" placeholder="Code Name" />
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputBrand" class="col-lg-3 control-label">Brand</label>
                         <div class="col-lg-9">
-                            <input type="text" class="form-control" id="inputBrand" placeholder="Brand" />
+                            <input data-bind="value: Brand" type="text" class="form-control" id="inputBrand" placeholder="Brand" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputName" class="col-lg-3 control-label">Name</label>
                         <div class="col-lg-9">
-                            <input type="text" class="form-control" id="inputName" placeholder="Name" />
+                            <input data-bind="value: Name" type="text" class="form-control" id="inputName" placeholder="Name" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputSlogan" class="col-lg-3 control-label">Slogan</label>
                         <div class="col-lg-9">
-                            <input type="text" class="form-control" id="inputSlogan" placeholder="Slogan" />
+                            <input data-bind="value: Slogan" type="text" class="form-control" id="inputSlogan" placeholder="Slogan" />
                         </div>
                     </div>
                 </form>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Add</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <div id="new-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
+                <button data-bind="click: add" type="button" class="btn btn-primary" id="btn-new-product" data-loading-text="Adding...">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: close">Close</button>
             </div>
 
         </div>
     </div>
 </div>
 
-<div id="edit-product">
+<div id="edit-product" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-bind="click: cancle">&times;</button>
+                <h4 class="modal-title">Edit Product</h4>
+            </div>
 
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
+                        <div class="col-lg-9">
+                            <input data-bind="value: CodeName" type="text" class="form-control" id="editCodeName" placeholder="Code Name" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputBrand" class="col-lg-3 control-label">Brand</label>
+                        <div class="col-lg-9">
+                            <input data-bind="value: Brand" type="text" class="form-control" id="editBrand" placeholder="Brand" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-3 control-label">Name</label>
+                        <div class="col-lg-9">
+                            <input data-bind="value: Name" type="text" class="form-control" id="editName" placeholder="Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputSlogan" class="col-lg-3 control-label">Slogan</label>
+                        <div class="col-lg-9">
+                            <input data-bind="value: Slogan" type="text" class="form-control" id="editSlogan" placeholder="Slogan" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <div id="edit-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
+                <button data-bind="click: saveChange" type="button" class="btn btn-primary" id="btn-edit-product" data-loading-text="Saving...">Save Change</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: cancle">Cancle</button>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<div id="error-alert" class="modal fade">
+    <div class="modal-body">
+        <p>Error</p>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    $(function () {
+        var newProductResultMessage = $('#new-product-result-message');
+        var editProductResultMessage = $('#edit-product-result-message');
+        var btnNewProduct = $('#btn-new-product');
+        var btnEditProduct = $('#btn-edit-product');
+
+        var $editProductUI = $('#edit-product');
+
+        newProductResultMessage.hide();
+
+        function Product(json){
+            var self = this;
+            json = json || {};
+            
+            self.CodeName = ko.observable(json.CodeName);
+            self.Brand = ko.observable(json.Brand);
+            self.Name = ko.observable(json.Name);
+            self.Slogan = ko.observable(json.Slogan);
+            self.Status = ko.observable(json.StatusDisplay);
+            self.ResultMessage = ko.observable();
+
+            self.add = function () {
+                btnNewProduct.button("loading");
+                var data = ko.toJS(self);
+                data.CodeName = "P-" + data.CodeName;
+
+                self.addAjax = $.ajax({
+                    url: '@Url.Action("Add")',
+                    contentType: 'application/json',
+                    type: "POST",
+                    data: ko.toJSON(data),
+                    dataType: 'json',
+                    success: function (result) {
+                        btnNewProduct.button("reset");
+                        if (result.success) {
+                            proIndex.addProduct(new Product(result.data));
+                            self.ResultMessage(result.message);
+                            newProductResultMessage.show();
+                            newProductResultMessage.removeClass();
+                            newProductResultMessage.addClass("alert alert-success");
+                            newProductResultMessage.effect("slide", {}, 300);
+                            self.reset();
+                        } else {
+                            self.ResultMessage(result.message);
+                            newProductResultMessage.show();
+                            newProductResultMessage.removeClass();
+                            newProductResultMessage.addClass("alert alert-danger");
+                            newProductResultMessage.effect("bounce", {}, 300);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        btnNewProduct.button("reset");
+
+                        self.ResultMessage(request.responseText);
+                        newProductResultMessage.show();
+                        newProductResultMessage.removeClass();
+                        newProductResultMessage.addClass("alert alert-danger");
+                        newProductResultMessage.effect("bounce", {}, 300);
+                    }
+                });
+            }
+
+            self.close = function () {
+                if (self.addAjax !== undefined) {
+                    self.addAjax.abort();
+                }
+                self.reset();
+            }
+
+            self.reset = function () {
+                self.CodeName("");
+                self.Brand("");
+                self.Name("");
+                self.Slogan("");
+                self.Status("");
+            }
+
+            self.cancle = function () {
+                if (self.saveChangeAjax !== undefined) {
+                    self.saveChangeAjax.abort();
+                }
+                $editProductUI.modal('hide');
+                btnEditProduct.button("reset");
+            }
+
+            self.saveChange = function () {
+                btnEditProduct.button("loading");
+
+                var data = ko.toJS(self);
+                self.saveChangeAjax = $.ajax({
+                    url: '@Url.Action("Save")',
+                    contentType: 'application/json',
+                    type: "POST",
+                    data: ko.toJSON(data),
+                    dataType: 'json',
+                    success: function (result) {
+                        btnEditProduct.button("reset");
+                        
+                        if (result.success) {
+                            self.ResultMessage(result.message);
+                            editProductResultMessage.removeClass();
+                            editProductResultMessage.addClass("alert alert-success");
+                            editProductResultMessage.show();
+                            editProductResultMessage.effect("slide", {}, 300);
+                        } else {
+                            self.ResultMessage(result.message);
+                            editProductResultMessage.show();
+                            editProductResultMessage.removeClass();
+                            editProductResultMessage.addClass("alert alert-danger");
+                            editProductResultMessage.effect("bounce", {}, 300);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        btnEditProduct.button("reset");
+
+                        self.ResultMessage(request.responseText);
+                        editProductResultMessage.show();
+                        editProductResultMessage.removeClass();
+                        editProductResultMessage.addClass("alert alert-danger");
+                        editProductResultMessage.effect("bounce", {}, 300);
+                    }
+                });
+
+            }
+        }
+
+        function ProductIndex(json) {
+            var self = this;
+            json = json || {};
+
+            self.Page = ko.observable(json.Page);
+            self.TotalPage = ko.observable(json.TotalPage);
+            self.Size = ko.observable(json.Size);
+            self.Products = ko.observableArray(json.Products);
+
+            self.Total = ko.computed(function () {
+                return self.Products.length;
+            });
+
+            self.addProduct = function (p) {
+                self.Products.push(p);
+            }
+
+            self.newProduct = function () {
+                newProductResultMessage.hide();
+
+                ko.cleanNode($('#new-product')[0]);
+                ko.applyBindings(new Product(), $('#new-product')[0]);
+            }
+
+            self.edit = function (p) {
+                editProductResultMessage.hide();
+                p.ResultMessage("");
+                ko.cleanNode($editProductUI[0]);
+                ko.applyBindings(p, $editProductUI[0]);
+            }
+        }
+
+        var proIndex = new ProductIndex();
+
+        @foreach (var p in Model)
+	    {
+        <text>
+        var newP = new Product(@Html.Raw(JsonConvert.SerializeObject(p)));
+        proIndex.addProduct(newP);
+
+        </text>
+	    }
+
+        ko.applyBindings(proIndex, $('#product-list')[0]);
+
+    });
+</script>
+}

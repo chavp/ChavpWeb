@@ -19,6 +19,8 @@ namespace Web
         public static IDictionary<string, User> Members { get; set; }
         public static IDictionary<string, string[]> UserRoleDic { get; set; }
 
+        public static IList<Product> Products { get; set; }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -42,6 +44,25 @@ namespace Web
             UserRoleDic = new Dictionary<string, string[]>();
 
             UserRoleDic.Add(chavp.Name, new string[]{"admin"});
+
+            Products = new List<Product>();
+
+            Products.Add(new Product
+            {
+                Brand = "Chavp",
+                CodeName = "P-MOCKUP",
+                Name = "Hello, World.",
+                Slogan = "It's simple.",
+                Status = EProductStatus.Concept,
+            });
+            Products.Add(new Product
+            {
+                Brand = "Chavp",
+                CodeName = "P-CAL",
+                Name = "ChavpCal.",
+                Slogan = "Calculate Baby",
+                Status = EProductStatus.Concept,
+            });
         }
 
         void Session_Start(object sender, EventArgs e)

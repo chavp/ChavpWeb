@@ -78,7 +78,7 @@
                         <text>
                         @using (Html.BeginForm("SignOut", "Account", FormMethod.Post, htmlDic))
                         {
-                            <a data-toggle="modal" class="btn btn-success" href="#profile" data-bind="attr: {title: Roles}">Hello, <span data-bind="text: Name"></span></a>
+                            <a id="signin-info" data-toggle="modal" class="btn btn-success" href="#profile" data-bind="attr: {title: Roles}">Hello, <span data-bind="text: Name"></span></a>
                             <span>|</span>
                             @Html.AntiForgeryToken()
                             <a href="javascript:document.getElementById('signOutForm').submit()" class="btn btn-danger">Sign Out</a>
@@ -107,7 +107,7 @@
     @if (Request.IsAuthenticated)
     {
         <text>
-        <div id="profile" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div id="profile" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -138,18 +138,21 @@
 
     <script>
         $(function () {
-            function UserViewModel() {
-                this.Name = ko.observable();
-                this.Roles = ko.observable();
+            function UserViewModel(data) {
+                var self = this;
+                data = data || {};
+
+                this.Name = ko.observable(data.Name);
+                this.Roles = ko.observable(data.Roles);
             }
 
-            var userVM = new UserViewModel();
-            userVM.Name("@User.Identity.Name");
-            userVM.Roles("@string.Join(",", @Roles.GetRolesForUser())");
+            var data = {Name: "@User.Identity.Name", Roles: "@string.Join(",", Roles.GetRolesForUser())"};
+            var userVM = new UserViewModel(data);
 
-            ko.applyBindings(userVM);
+            ko.applyBindings(userVM, $('#signin-info')[0]);
         });
     </script>
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
