@@ -39,11 +39,11 @@
             </tbody>
         </table>
         <ul class="pagination pagination-sm">
-            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li id="paging-pre"><a href="#">&laquo;</a></li>
             <!-- ko foreach: Pages -->
                 <li data-bind="attr: { 'class': active }"><a data-bind="text: page, click: $parent.loadProducts"></a></li>
             <!-- /ko -->
-            <li class="disabled"><a href="#">&raquo;</a></li>
+            <li id="paging-next"><a href="#">&raquo;</a></li>
         </ul>
     </div>
     
@@ -157,6 +157,9 @@
         var btnCloseProduct = $('#btn-close-new-product');
         var btnEditProduct = $('#btn-edit-product');
         var btnCancleEditProduct = $('#btn-cancle-edit-product');
+
+        var pagingPre = $('#paging-pre');
+        var pagingNext = $('#paging-next');
 
         var $newProductUI = $('#new-product');
         $newProductUI.live('shown.bs.modal', function () {
@@ -376,10 +379,10 @@
                 }
             });
 
-            self.update(data);
-
             self.Total = ko.observable();
             self.LastPage = ko.observable();
+
+            self.update(data);
 
             self.addProduct = function (p) {
                 self.Products.push(p);
@@ -442,6 +445,19 @@
                                 }
                             }
                             
+                            pagingNext.removeClass("disabled");
+                            pagingPre.removeClass("disabled");
+                            
+                            if (pageSize <= 1) {
+                                pagingPre.addClass("disabled");
+                                pagingNext.addClass("disabled");
+                            } else {
+                                if (self.Page() === 1) {
+                                    pagingPre.addClass("disabled");
+                                }else if (self.LastPage() === pageSize) {
+                                    pagingNext.addClass("disabled");
+                                }
+                            }
                         }
                     },
                     error: function (request, status, error) {
@@ -462,6 +478,7 @@
                 data = data || {};
 
                 this.Page(data.Page || 1);
+                this.LastPage(data.LastPage || 1);
                 this.Limit(data.Limit || 25);
                 this.TotalPage(data.TotalPage || 0);
                 this.Size(data.Size || 0);
@@ -473,14 +490,6 @@
             Limit: 2
         });
         proIndex.getProducts();
-
-@*        @foreach (var p in Model)
-	    {
-        <text>
-        var newP = new Product(@Html.Raw(JsonConvert.SerializeObject(p)));
-        proIndex.addProduct(newP);
-        </text>
-	    }*@
 
         ko.applyBindings(proIndex, $('#product-list')[0]);
 
