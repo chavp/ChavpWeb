@@ -116,7 +116,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <p data-bind="text: Roles">admin</p>
+                        <p data-bind="text: Roles"></p>
                         <p><strong data-bind="text: Name"></strong></p>
                     </div>
 
@@ -142,14 +142,15 @@
                 var self = this;
                 data = data || {};
 
-                this.Name = ko.observable(data.Name);
-                this.Roles = ko.observable(data.Roles);
+                self.Name = ko.observable(data.Name);
+                self.Roles = ko.observable(data.Roles);
             }
 
             var data = {Name: "@User.Identity.Name", Roles: "@string.Join(",", Roles.GetRolesForUser())"};
             var userVM = new UserViewModel(data);
 
             ko.applyBindings(userVM, $('#signin-info')[0]);
+            ko.applyBindings(userVM, $('#profile')[0]);
         });
     </script>
 

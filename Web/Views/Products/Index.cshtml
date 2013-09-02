@@ -1,7 +1,5 @@
 ﻿@using Newtonsoft.Json
 
-@model IList<Web.Models.Product>
-
 @{
     ViewBag.Title = "Products";
 }
@@ -18,39 +16,35 @@
         <table class="table table-condensed table-hover">
             <thead>
                 <tr>
-                    <th>CodeName</th>
-                    <th>Brand</th>
-                    <th>Name</th>
-                    <th>Slogan</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th class="col-md-2">CodeName</th>
+                    <th class="col-md-2">Brand</th>
+                    <th class="col-md-2">Name</th>
+                    <th class="col-md-3">Slogan</th>
+                    <th class="col-md-1">Status</th>
+                    <th class="col-md-2">Actions</th>
                 </tr>
             </thead>
             <tbody data-bind="foreach: Products">
-                <tr data-bind="attr: { id: CodeName }">
+                <tr data-bind="attr: { id: getRowID() }">
                     <td><span data-bind="text: CodeName"></span></td>
                     <td><span data-bind="text: Brand"></span></td>
                     <td><span data-bind="text: Name"></span></td>
                     <td><span data-bind="text: Slogan"></span></td>
-                    <td><span class="label label-warning" data-bind="text: Status"></span></td>
-                    <td>
+                    <td><span class="label label-warning" data-bind="text: StatusDisplay"></span></td>
+                    <td data-bind="attr: { id: getBtnActionsID() }">
                         <a data-toggle="modal" href="#edit-product" data-bind="click: $parent.edit"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a href="#remove-product" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
+                        <a data-bind="click: $parent.remove" href="#remove-product" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
                     </td>
                 </tr>
             </tbody>
-            <tfoot>
-                <tr>
-                    <td>
-                        <ul class="pagination pagination-sm">
-                            <li class="disabled"><a href="#">&laquo;</a></li>
-                            <li class="active"><a href="#">1</a></li>
-                            <li class="disabled"><a href="#">&raquo;</a></li>
-                        </ul>
-                    </td>
-                </tr>
-            </tfoot>
         </table>
+        <ul class="pagination pagination-sm">
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <!-- ko foreach: Pages -->
+                <li data-bind="attr: { 'class': active }"><a data-bind="text: page, click: $parent.loadProducts"></a></li>
+            <!-- /ko -->
+            <li class="disabled"><a href="#">&raquo;</a></li>
+        </ul>
     </div>
     
 </div>
@@ -59,7 +53,6 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-bind="click: close">&times;</button>
                 <h4 class="modal-title">New Product</h4>
             </div>
 
@@ -70,7 +63,7 @@
                         <div class="col-lg-9">
                             <div class="input-group">
                             <span class="input-group-addon">P-</span>
-                            <input data-bind="value: CodeName" type="text" class="form-control active" id="inputCodeName" placeholder="Code Name" />
+                            <input data-bind="value: CodeName" type="text" class="form-control active text-uppercase" id="inputCodeName" placeholder="Code Name" />
                             </div>
                         </div>
                     </div>
@@ -94,13 +87,11 @@
                     </div>
                 </form>
             </div>
-
             <div class="modal-footer">
-                <div id="new-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
                 <button data-bind="click: add" type="button" class="btn btn-primary" id="btn-new-product" data-loading-text="Adding...">Add</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: close">Close</button>
+                <button id="btn-close-new-product" type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: close">Close</button>
             </div>
-
+            <div id="new-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
         </div>
     </div>
 </div>
@@ -109,7 +100,6 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-bind="click: cancle">&times;</button>
                 <h4 class="modal-title">Edit Product</h4>
             </div>
 
@@ -118,7 +108,7 @@
                     <div class="form-group">
                         <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
                         <div class="col-lg-9">
-                            <input data-bind="value: CodeName" type="text" class="form-control" id="editCodeName" placeholder="Code Name" disabled/>
+                            <input data-bind="value: CodeName" type="text" class="form-control text-uppercase" id="editCodeName" placeholder="Code Name" disabled/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -143,11 +133,11 @@
             </div>
 
             <div class="modal-footer">
-                <div id="edit-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
                 <button data-bind="click: saveChange" type="button" class="btn btn-primary" id="btn-edit-product" data-loading-text="Saving...">Save Change</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: cancle">Cancle</button>
+                <button id="btn-cancle-edit-product" type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: cancle">Cancle</button>
             </div>
 
+            <div id="edit-product-result-message" class="alert" data-bind="text: ResultMessage"></div>
         </div>
     </div>
 </div>
@@ -164,28 +154,51 @@
         var newProductResultMessage = $('#new-product-result-message');
         var editProductResultMessage = $('#edit-product-result-message');
         var btnNewProduct = $('#btn-new-product');
+        var btnCloseProduct = $('#btn-close-new-product');
         var btnEditProduct = $('#btn-edit-product');
+        var btnCancleEditProduct = $('#btn-cancle-edit-product');
+
+        var $newProductUI = $('#new-product');
+        $newProductUI.live('shown.bs.modal', function () {
+            $('#inputCodeName').focus();
+        });
 
         var $editProductUI = $('#edit-product');
 
         newProductResultMessage.hide();
 
-        function Product(json){
+        function Product(data) {
             var self = this;
-            json = json || {};
-            
-            self.CodeName = ko.observable(json.CodeName);
-            self.Brand = ko.observable(json.Brand);
-            self.Name = ko.observable(json.Name);
-            self.Slogan = ko.observable(json.Slogan);
-            self.Status = ko.observable(json.StatusDisplay);
+
+            self.CodeName = ko.observable();
+            self.Brand = ko.observable();
+            self.Name = ko.observable();
+            self.Slogan = ko.observable();
+            self.Status = ko.observable();
+            self.StatusDisplay = ko.observable();
             self.ResultMessage = ko.observable();
+            self.cache = function () { };
+            self.update(data);
+
+            self.getBtnActionsID = function () {
+                return "btn-actions-" + self.CodeName();
+            }
+
+            self.getRowID = function () {
+                return "row-" + self.CodeName();
+            }
 
             self.add = function () {
+                if (self.CodeName() === "") {
+                    self.alertDangerMessage("Require Code Name!");
+                    $('#inputCodeName').focus();
+                    return false;
+                }
                 btnNewProduct.button("loading");
-                var data = ko.toJS(self);
-                data.CodeName = "P-" + data.CodeName;
+                btnCloseProduct.attr("disabled", "disabled");
 
+                var data = ko.toJS(self);
+                data.CodeName = "P-" + data.CodeName.toUpperCase();
                 self.addAjax = $.ajax({
                     url: '@Url.Action("Add")',
                     contentType: 'application/json',
@@ -194,6 +207,7 @@
                     dataType: 'json',
                     success: function (result) {
                         btnNewProduct.button("reset");
+                        btnCloseProduct.removeAttr("disabled", "disabled");
                         if (result.success) {
                             proIndex.addProduct(new Product(result.data));
                             self.ResultMessage(result.message);
@@ -202,24 +216,26 @@
                             newProductResultMessage.addClass("alert alert-success");
                             newProductResultMessage.effect("slide", {}, 300);
                             self.reset();
+                            proIndex.getProducts();
+                            $('#inputCodeName').focus();
                         } else {
-                            self.ResultMessage(result.message);
-                            newProductResultMessage.show();
-                            newProductResultMessage.removeClass();
-                            newProductResultMessage.addClass("alert alert-danger");
-                            newProductResultMessage.effect("bounce", {}, 300);
+                            self.alertDangerMessage(result.message);
                         }
                     },
                     error: function (request, status, error) {
                         btnNewProduct.button("reset");
-
-                        self.ResultMessage(request.responseText);
-                        newProductResultMessage.show();
-                        newProductResultMessage.removeClass();
-                        newProductResultMessage.addClass("alert alert-danger");
-                        newProductResultMessage.effect("bounce", {}, 300);
+                        btnCloseProduct.removeAttr("disabled", "disabled");
+                        self.alertDangerMessage(error);
                     }
                 });
+            }
+
+            self.alertDangerMessage = function (message) {
+                self.ResultMessage(message);
+                newProductResultMessage.show();
+                newProductResultMessage.removeClass();
+                newProductResultMessage.addClass("alert alert-danger");
+                newProductResultMessage.effect("bounce", {}, 300);
             }
 
             self.close = function () {
@@ -238,6 +254,7 @@
             }
 
             self.cancle = function () {
+                self.revert();
                 if (self.saveChangeAjax !== undefined) {
                     self.saveChangeAjax.abort();
                 }
@@ -247,6 +264,7 @@
 
             self.saveChange = function () {
                 btnEditProduct.button("loading");
+                btnCancleEditProduct.attr("disabled", "disabled");
 
                 var data = ko.toJS(self);
                 self.saveChangeAjax = $.ajax({
@@ -257,8 +275,10 @@
                     dataType: 'json',
                     success: function (result) {
                         btnEditProduct.button("reset");
-                        
+                        btnCancleEditProduct.removeAttr("disabled");
+
                         if (result.success) {
+                            self.commit();
                             self.ResultMessage(result.message);
                             editProductResultMessage.removeClass();
                             editProductResultMessage.addClass("alert alert-success");
@@ -274,30 +294,92 @@
                     },
                     error: function (request, status, error) {
                         btnEditProduct.button("reset");
+                        btnCancleEditProduct.removeAttr("disabled");
 
-                        self.ResultMessage(request.responseText);
+                        self.ResultMessage(error);
                         editProductResultMessage.show();
                         editProductResultMessage.removeClass();
                         editProductResultMessage.addClass("alert alert-danger");
                         editProductResultMessage.effect("bounce", {}, 300);
                     }
                 });
+            }
 
+            self.remove = function (completed) {
+                var codeName = self.CodeName();
+                $('#' + self.getBtnActionsID()).hide(100);
+
+                self.removeAjax = $.ajax({
+                    url: '@Url.Action("Remove")',
+                    contentType: 'application/json',
+                    type: "POST",
+                    data: ko.toJSON({ codeName: codeName }),
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $('#' + self.getRowID()).animate(
+                                { opacity: 0 }, 700, function () {
+                                    proIndex.Products.remove(self);
+                                });
+
+                            //proIndex.Page(1);
+                            //proIndex.getProducts();
+                            if (completed !== undefined) {
+                                completed();
+                            }
+                        } 
+                    },
+                    error: function (request, status, error) {
+                        $('#' + self.getBtnActionsID()).show();
+                        alert(error);
+                    }
+                });
             }
         }
 
-        function ProductIndex(json) {
+        ko.utils.extend(Product.prototype, {
+            update: function (data) {
+                data = data || {};
+
+                this.CodeName(data.CodeName || "");
+                this.Brand(data.Brand);
+                this.Name(data.Name);
+                this.Slogan(data.Slogan);
+                this.Status(data.Status);
+                this.StatusDisplay(data.StatusDisplay);
+                this.ResultMessage(data.ResultMessage);
+
+                //save off the latest data for later use
+                this.cache.latestData = data;
+            },
+            revert: function () {
+                this.update(this.cache.latestData);
+            },
+            commit: function () {
+                this.cache.latestData = ko.toJS(this);
+            }
+        });
+
+        function ProductIndex(data) {
             var self = this;
-            json = json || {};
 
-            self.Page = ko.observable(json.Page);
-            self.TotalPage = ko.observable(json.TotalPage);
-            self.Size = ko.observable(json.Size);
-            self.Products = ko.observableArray(json.Products);
+            self.Page = ko.observable();
+            self.TotalPage = ko.observable();
+            self.Size = ko.observable();
+            self.Products = ko.observableArray();
+            self.Pages = ko.observableArray();
+            self.Limit = ko.observable();
 
-            self.Total = ko.computed(function () {
-                return self.Products.length;
+            self.Start = ko.computed({
+                read: function () {
+                    return (self.Page() - 1) * self.Limit();
+                }
             });
+
+            self.update(data);
+
+            self.Total = ko.observable();
+            self.LastPage = ko.observable();
 
             self.addProduct = function (p) {
                 self.Products.push(p);
@@ -306,8 +388,8 @@
             self.newProduct = function () {
                 newProductResultMessage.hide();
 
-                ko.cleanNode($('#new-product')[0]);
-                ko.applyBindings(new Product(), $('#new-product')[0]);
+                ko.cleanNode($newProductUI[0]);
+                ko.applyBindings(new Product(), $newProductUI[0]);
             }
 
             self.edit = function (p) {
@@ -316,18 +398,89 @@
                 ko.cleanNode($editProductUI[0]);
                 ko.applyBindings(p, $editProductUI[0]);
             }
+
+            self.remove = function (p) {
+                p.remove(function () {
+                    self.Products.remove(p);
+                    if (self.Page() === self.LastPage()) {
+                        if (self.Products().length === 0) {
+                            self.Page(self.Page() - 1);
+                        }
+                    }
+                    self.getProducts();
+                });
+            }
+
+            self.getProducts = function () {
+                $.ajax({
+                    url: '@Url.Action("GetProducts")',
+                    contentType: 'application/json',
+                    type: "GET",
+                    data: { start: self.Start(), limit: self.Limit() },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            self.Total(result.total);
+                            self.Pages.removeAll();
+                            self.Products.removeAll();
+
+                            for (var i = 0; i < result.data.length; i++) {
+                                var p = new Product(result.data[i]);
+                                self.addProduct(p);
+                            }
+
+                            var pageSize = Math.round(self.Total() / self.Limit());
+                            if (self.Page() > pageSize) {
+                                self.Page(self.Page() - 1);
+                            }
+                            self.LastPage(pageSize);
+                            for (var i = 1; i <= pageSize; i++) {
+                                if (i === self.Page()) {
+                                    self.Pages.push({ active: "active", page: i, limit: self.Limit() });
+                                } else {
+                                    self.Pages.push({ active: "", page: i, limit: self.Limit() });
+                                }
+                            }
+                            
+                        }
+                    },
+                    error: function (request, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            self.loadProducts = function (page) {
+                self.Page(page.page);
+                self.Limit(page.limit);
+                self.getProducts();
+            }
         }
 
-        var proIndex = new ProductIndex();
+        ko.utils.extend(ProductIndex.prototype, {
+            update: function (data) {
+                data = data || {};
 
-        @foreach (var p in Model)
+                this.Page(data.Page || 1);
+                this.Limit(data.Limit || 25);
+                this.TotalPage(data.TotalPage || 0);
+                this.Size(data.Size || 0);
+                this.Products = ko.observableArray(data.Products);
+            }
+        });
+
+        var proIndex = new ProductIndex({
+            Limit: 2
+        });
+        proIndex.getProducts();
+
+@*        @foreach (var p in Model)
 	    {
         <text>
         var newP = new Product(@Html.Raw(JsonConvert.SerializeObject(p)));
         proIndex.addProduct(newP);
-
         </text>
-	    }
+	    }*@
 
         ko.applyBindings(proIndex, $('#product-list')[0]);
 

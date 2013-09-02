@@ -40,3 +40,7 @@ body {
 code {
   font-size: 80%;
 }
+
+.text-uppercase {
+    text-transform: uppercase;
+}

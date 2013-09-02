@@ -47,22 +47,31 @@ namespace Web
 
             Products = new List<Product>();
 
-            Products.Add(new Product
+            //Products.Add(new Product
+            //{
+            //    Brand = "Chavp",
+            //    CodeName = "P-MOCKUP",
+            //    Name = "Hello, World.",
+            //    Slogan = "It's simple.",
+            //    Status = EProductStatus.Concept,
+            //});
+            //Products.Add(new Product
+            //{
+            //    Brand = "Chavp",
+            //    CodeName = "P-CAL",
+            //    Name = "ChavpCal.",
+            //    Slogan = "Calculate Baby",
+            //    Status = EProductStatus.Concept,
+            //});
+            for (int i = 1; i <= 10; i++)
             {
-                Brand = "Chavp",
-                CodeName = "P-MOCKUP",
-                Name = "Hello, World.",
-                Slogan = "It's simple.",
-                Status = EProductStatus.Concept,
-            });
-            Products.Add(new Product
-            {
-                Brand = "Chavp",
-                CodeName = "P-CAL",
-                Name = "ChavpCal.",
-                Slogan = "Calculate Baby",
-                Status = EProductStatus.Concept,
-            });
+                Products.Add(new Product
+                {
+                    Brand = "#:P",
+                    CodeName = string.Format("P-{0}", i),
+                    Status = EProductStatus.Concept,
+                });
+            }
         }
 
         void Session_Start(object sender, EventArgs e)

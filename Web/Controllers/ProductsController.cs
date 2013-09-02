@@ -16,7 +16,16 @@ namespace Web.Controllers
 
         public ActionResult Index()
         {
-            return View(MvcApplication.Products);
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult GetProducts(int start, int limit)
+        {
+            var total = MvcApplication.Products.Count;
+            var result = MvcApplication.Products.Skip(start).Take(limit).ToList();
+
+            return Json(new { success = true, data = result, message = "", total = total }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -53,6 +62,22 @@ namespace Web.Controllers
                 oldProduc.Slogan = p.Slogan;
             }
             return Json(new { success = true, data = p, message = "Save completed." }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Remove(string codeName)
+        {
+            Thread.Sleep(1500);
+            var uniqQuery = from x in MvcApplication.Products
+                            where x.CodeName == codeName
+                            select x;
+            if (uniqQuery.Count() > 0)
+            {
+                var oldProduc = uniqQuery.Single();
+                MvcApplication.Products.Remove(oldProduc);
+            }
+
+            return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
         }
     }
 }
