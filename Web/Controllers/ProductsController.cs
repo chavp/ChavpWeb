@@ -39,7 +39,7 @@ namespace Web.Controllers
             {
                 p.Status = EProductStatus.Concept;
                 MvcApplication.Products.Add(p);
-                return Json(new { success = true, data = p, message = "Adding completed." }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = p, message = string.Format("Adding {0} completed.", p.CodeName) }, JsonRequestBehavior.AllowGet);
             }
             else
             {
