@@ -39,11 +39,11 @@
             </tbody>
         </table>
         <ul class="pagination pagination-sm">
-            <li id="paging-pre"><a href="#">&laquo;</a></li>
+            <li id="paging-pre"><a data-bind="click: previous" href="#">&laquo;</a></li>
             <!-- ko foreach: Pages -->
-                <li data-bind="attr: { 'class': active }"><a data-bind="text: page, click: $parent.loadProducts"></a></li>
+                <li data-bind="attr: { 'class': active }"><a data-bind="text: page, click: $parent.loadProducts" href="#"></a></li>
             <!-- /ko -->
-            <li id="paging-next"><a href="#">&raquo;</a></li>
+            <li id="paging-next"><a data-bind="click: next" href="#">&raquo;</a></li>
         </ul>
     </div>
     
@@ -454,7 +454,7 @@
                             } else {
                                 if (self.Page() === 1) {
                                     pagingPre.addClass("disabled");
-                                }else if (self.LastPage() === pageSize) {
+                                } else if (self.LastPage() === self.Page()) {
                                     pagingNext.addClass("disabled");
                                 }
                             }
@@ -469,6 +469,20 @@
             self.loadProducts = function (page) {
                 self.Page(page.page);
                 self.Limit(page.limit);
+                self.getProducts();
+            }
+
+            self.previous = function () {
+                if (self.Page() === 1) return false;
+
+                self.Page(self.Page() - 1);
+                self.getProducts();
+            }
+
+            self.next = function () {
+                if (self.Page() === self.LastPage()) return false;
+
+                self.Page(self.Page() + 1);
                 self.getProducts();
             }
         }
