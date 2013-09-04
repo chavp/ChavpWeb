@@ -29,9 +29,9 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetProducts(int start, int limit)
+        public ActionResult GetProducts(int index, int limit)
         {
-            var result = _productService.GetProducts(start, limit);
+            var result = _productService.GetProducts(index, limit);
 
             return Json(new { success = true, data = result.Products, message = "", total = result.Total }, JsonRequestBehavior.AllowGet);
         }

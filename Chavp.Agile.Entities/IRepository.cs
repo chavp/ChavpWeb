@@ -29,12 +29,11 @@ namespace Chavp.Agile.Entities
         /// <summary>
         /// Gets objects from database with filting and paging.
         /// </summary>
-        /// <typeparam name="Key"></typeparam>
         /// <param name="filter">Specified a filter</param>
         /// <param name="total">Returns the total records count of the filter.</param>
         /// <param name="index">Specified the page index.</param>
         /// <param name="size">Specified the page size</param>
-        IQueryable<TEntity> Filter<Key>(Expression<Func<TEntity, bool>> filter,
+        IQueryable<TEntity> Filter(Expression<Func<TEntity, bool>> filter,
             out int total, int index = 0, int size = 50);
 
         /// <summary>

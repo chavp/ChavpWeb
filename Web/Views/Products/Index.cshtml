@@ -373,9 +373,9 @@
             self.Pages = ko.observableArray();
             self.Limit = ko.observable();
 
-            self.Start = ko.computed({
+            self.PageIndex = ko.computed({
                 read: function () {
-                    return (self.Page() - 1) * self.Limit();
+                    return (self.Page() - 1);
                 }
             });
 
@@ -419,7 +419,7 @@
                     url: '@Url.Action("GetProducts")',
                     contentType: 'application/json',
                     type: "GET",
-                    data: { start: self.Start(), limit: self.Limit() },
+                    data: { index: self.PageIndex(), limit: self.Limit() },
                     dataType: 'json',
                     success: function (result) {
                         if (result.success) {
@@ -501,7 +501,7 @@
         });
 
         var proIndex = new ProductIndex({
-            // Limit: 4
+            Limit: 4
         });
         proIndex.getProducts();
 

@@ -26,14 +26,17 @@ namespace Chavp.Agile.Mappings
             return Session.Query<T>().Where(predicate).AsQueryable<T>();
         }
 
-        public IQueryable<T> Filter<Key>(Expression<Func<T, bool>> filter, out int total, int index = 0, int size = 50)
+        public IQueryable<T> Filter(Expression<Func<T, bool>> filter, out int total, int index = 0, int size = 50)
         {
             int skipCount = index * size;
             var _resetSet = filter != null ? Session.Query<T>().Where(filter).AsQueryable() :
                 Session.Query<T>().AsQueryable();
+
+            total = _resetSet.Count();
+
             _resetSet = skipCount == 0 ? _resetSet.Take(size) :
                 _resetSet.Skip(skipCount).Take(size);
-            total = _resetSet.Count();
+
             return _resetSet.AsQueryable();
         }
 

@@ -17,10 +17,10 @@ namespace Chavp.Agile.Entities
         }
 
         [UnitOfWork]
-        public ProductResult GetProducts(int start, int limit)
+        public ProductResult GetProducts(int pageIndex, int limit)
         {
-            var total = _productRepository.Count;
-            var result = _productRepository.All().Skip(start).Take(limit).ToList();
+            int total;
+            var result = _productRepository.Filter(null, out total, pageIndex, limit).ToList();
             return new ProductResult
             {
                 Total = total,
