@@ -182,10 +182,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\HtmlHelpers.cs" />
+    <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Interceptors\UnitOfWorkInterceptor.cs" />
     <Compile Include="Installers\ControllersInstaller.cs" />
-    <Compile Include="Interceptors\UnitOfWorkHelper.cs" />
     <Compile Include="Models\InMemoryMembershipProvider.cs" />
     <Compile Include="Models\InMemoryProfileProvider.cs" />
     <Compile Include="Models\InMemoryRoleProvider.cs" />
