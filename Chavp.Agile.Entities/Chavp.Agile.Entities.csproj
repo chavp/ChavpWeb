@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\UnitOfWorkHelper.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EProductStatus.cs" />
     <Compile Include="Feature.cs" />
