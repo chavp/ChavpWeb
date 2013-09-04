@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Chavp.Agile.UseCases.Data
 {
-    public class ProductDisplay
+    public class ProductResult
     {
         public int Total { get; set; }
         public IList<ProductDto> Products { get; set; }

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FeatureMap.cs" />
+    <Compile Include="FeatureRepository.cs" />
     <Compile Include="ProductMap.cs" />
     <Compile Include="ProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

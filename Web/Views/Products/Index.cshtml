@@ -4,10 +4,6 @@
     ViewBag.Title = "Products";
 }
 
-<style>
-    .ui-effects-transfer { border: 2px dotted gray; }
-</style>
-
 <div id="product-list" class="well well-sm">
     <div class="btn-toolbar">
         <a data-toggle="modal" href="#new-product" class="btn btn-primary" data-bind="click: newProduct">New Product</a>
@@ -46,7 +42,6 @@
             <li id="paging-next"><a data-bind="click: next" href="#">&raquo;</a></li>
         </ul>
     </div>
-    
 </div>
 
 <div id="new-product" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
@@ -83,6 +78,22 @@
                         <label for="inputSlogan" class="col-lg-3 control-label">Slogan</label>
                         <div class="col-lg-9">
                             <input data-bind="value: Slogan" type="text" class="form-control" id="inputSlogan" placeholder="Slogan" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputSlogan" class="col-lg-3 control-label">Features</label>
+                        <div class="col-lg-9">
+                            <div class="btn-toolbar">
+                                <a data-toggle="modal" href="#features-list" class="btn btn-primary btn-sm">Add Feature</a>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>CodeName</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </form>
@@ -142,6 +153,37 @@
     </div>
 </div>
 
+<div id="features-list" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Features</h4>
+            </div>
+
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>CodeName</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                            <th>Result</th>
+                            <th>Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="error-alert" class="modal fade">
     <div class="modal-body">
         <p>Error</p>
@@ -149,6 +191,7 @@
 </div>
 
 @section scripts{
+<script src="~/Scripts/agilestudio/ui/Page.js" type="text/javascript"></script>
 <script>
     $(function () {
         var $newProductResultMessage = $('#new-product-result-message');
@@ -162,6 +205,7 @@
         var $pagingNext = $('#paging-next');
 
         var $inputCodeName = $('#inputCodeName');
+        var $productList = $('#product-list');
 
         var $newProductUI = $('#new-product');
         $newProductUI.live('shown.bs.modal', function () {
@@ -365,23 +409,11 @@
             }
         });
 
-        function FeatureViewModel(data) {
-            var self = this;
-
-            self.CodeName = ko.observable();
-            self.Name = ko.observable();
-            self.Description = ko.observable();
-            self.Action = ko.observable();
-            self.Result = ko.observable();
-            self.Object = ko.observable();
-        }
-
         function ProductIndex(data) {
             var self = this;
 
             self.Page = ko.observable();
             self.TotalPage = ko.observable();
-            self.Size = ko.observable();
             self.Products = ko.observableArray();
             self.Pages = ko.observableArray();
             self.Limit = ko.observable();
@@ -455,9 +487,9 @@
                             self.LastPage(pageSize);
                             for (var i = 1; i <= pageSize; i++) {
                                 if (i === self.Page()) {
-                                    self.Pages.push({ active: "active", page: i, limit: self.Limit() });
+                                    self.Pages.push(new Page({ active: "active", page: i, limit: self.Limit() }));
                                 } else {
-                                    self.Pages.push({ active: "", page: i, limit: self.Limit() });
+                                    self.Pages.push(new Page({ active: "", page: i, limit: self.Limit() }));
                                 }
                             }
                             
@@ -511,17 +543,16 @@
                 this.LastPage(data.LastPage || 1);
                 this.Limit(data.Limit || 25);
                 this.TotalPage(data.TotalPage || 0);
-                this.Size(data.Size || 0);
                 this.Products = ko.observableArray(data.Products);
             }
         });
 
         var _proIndex = new ProductIndex({
-            //Limit: 4
+            //Limit: 5
         });
         _proIndex.getProducts();
 
-        ko.applyBindings(_proIndex, $('#product-list')[0]);
+        ko.applyBindings(_proIndex, $productList[0]);
 
     });
 </script>

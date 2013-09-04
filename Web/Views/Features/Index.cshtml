@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div id="feature-list" class="well well-sm">
+    <div class="btn-toolbar">
+        <a data-toggle="modal" href="#new-feature" class="btn btn-primary" data-bind="click: newFeature">New Feature</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th class="col-md-1">CodeName</th>
+                    <th class="col-md-1">Name</th>
+                    <th class="col-md-3">Description</th>
+                    <th class="col-md-2">Action</th>
+                    <th class="col-md-2">Result</th>
+                    <th class="col-md-2">Object</th>
+                    <th class="col-md-1">Actions</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: Features">
+                <tr data-bind="attr: { id: getRowID() }">
+                    <td><span data-bind="text: CodeName"></span></td>
+                    <td><span data-bind="text: Name"></span></td>
+                    <td><span data-bind="text: Description"></span></td>
+                    <td><span data-bind="text: Action"></span></td>
+                    <td><span data-bind="text: Result"></span></td>
+                    <td><span data-bind="text: Object"></span></td>
+                    <td data-bind="attr: { id: getBtnActionsID() }">
+                        <a data-toggle="modal" href="#edit-feature" data-bind="click: $parent.edit"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a data-bind="click: $parent.remove" href="#remove-feature" role="button" data-toggle="modal"><span class="glyphicon glyphicon-remove"></span></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script src="~/Scripts/agilestudio/ui/Page.js" type="text/javascript"></script>
+<script>
+    function FeatureViewModel(data) {
+        var self = this;
+        data = data || {};
+
+        self.CodeName = ko.observable(data.CodeName || "");
+        self.Name = ko.observable(data.Name || "");
+        self.Description = ko.observable(data.Description || "");
+        self.Action = ko.observable(data.Action || "");
+        self.Result = ko.observable(data.Result || "");
+        self.Object = ko.observable(data.Object || "");
+    }
+
+    ko.utils.extend(FeatureViewModel.prototype, {
+        getRowID: function () {
+            return "row-" + this.CodeName();
+        },
+        getBtnActionsID: function () {
+            return "btn-" + this.CodeName();
+        }
+    });
+
+    function FeatureIndex(data) {
+        var self = this;
+
+        self.Features = ko.observableArray();
+
+        self.Features().push(new FeatureViewModel({ CodeName: "F-01" }));
+        self.Features().push(new FeatureViewModel({ CodeName: "F-02" }));
+    }
+
+    ko.utils.extend(FeatureIndex.prototype, {
+        newFeature: function () {
+            alert("newFeature");
+        },
+        edit: function () {
+            alert("edit");
+        },
+        remove: function () {
+            alert("remove");
+        }
+    });
+
+    $(function () {
+        var index = new FeatureIndex();
+        ko.applyBindings(index, $('#feature-list')[0]);
+    });
+</script>
+}

@@ -20,6 +20,8 @@ namespace Chavp.Agile.Mappings
             Version(x => x.Version)
                 .CustomType("Timestamp");
 
+            Map(x => x.Created).Not.Nullable();
+
             Map(x => x.Name);
             Map(x => x.Description);
 

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Chavp.Agile.UseCases
 {
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+
     using Chavp.Agile.Entities;
     using Chavp.Agile.Entities.Attributes;
     using Chavp.Agile.UseCases.Data;
@@ -16,6 +19,11 @@ namespace Chavp.Agile.UseCases
     public class ProductManagement
         : IProductManagement
     {
+        static ProductManagement()
+        {
+            AutoMapperConfiguration.Configure();
+        }
+
         IProductRepository _productRepository;
         public ProductManagement(IProductRepository productRepository)
         {
@@ -23,26 +31,24 @@ namespace Chavp.Agile.UseCases
         }
 
         [UnitOfWork]
-        public ProductDisplay GetProducts(int pageIndex, int limit)
+        public ProductResult GetProducts(int pageIndex, int limit)
         {
-            int total;
-            var models = _productRepository.Filter(null, out total, pageIndex, limit).ToList();
-            var result = new ProductDisplay
+            int total = _productRepository.Count;
+            var models = _productRepository
+                .All()
+                .OrderByDescending(p => p.Created)
+                .Skip(pageIndex * limit)
+                .Take( limit )
+                .Project()
+                .To<ProductDto>()
+                .ToList();
+
+            var result = new ProductResult
             {
                 Total = total,
-                Products = new List<ProductDto>(),
+                Products = models,
             };
-            models.ForEach(m =>
-            {
-                result.Products.Add(new ProductDto
-                {
-                    CodeName = m.CodeName,
-                    Brand = m.Brand,
-                    Name = m.Name,
-                    Slogan = m.Slogan,
-                    StatusDisplay = m.Status.ToString()
-                });
-            });
+
             return result;
         }
 
@@ -55,13 +61,15 @@ namespace Chavp.Agile.UseCases
             var m = uniqQuery.FirstOrDefault();
             if (m == null)
             {
-                var newProduct = new Product(p.CodeName)
-                {
-                    Brand = p.Brand,
-                    Name = p.Name,
-                    Slogan = p.Slogan,
-                    Status = EProductStatus.Concept
-                };
+                //var newProduct = new Product(p.CodeName)
+                //{
+                //    Brand = p.Brand,
+                //    Name = p.Name,
+                //    Slogan = p.Slogan,
+                //    Status = EProductStatus.Concept
+                //};
+
+                var newProduct = Mapper.Map<ProductDto, Product>(p);
                 _productRepository.Save(newProduct);
                 return true;
             }

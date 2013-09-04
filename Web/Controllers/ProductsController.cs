@@ -41,7 +41,7 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult Add(ProductDto p)
         {
-            Thread.Sleep(1500);
+            //Thread.Sleep(1500);
 
             if (_productManagement.Add(p))
             {
@@ -56,7 +56,7 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult Save(ProductDto p)
         {
-            Thread.Sleep(1500);
+           // Thread.Sleep(1500);
             if (_productManagement.Save(p))
             {
                 return Json(new { success = true, data = p, message = "Save completed." }, JsonRequestBehavior.AllowGet);
@@ -70,7 +70,7 @@ namespace Web.Controllers
         [HttpPost]
         public JsonResult Remove(string codeName)
         {
-            Thread.Sleep(1500);
+           // Thread.Sleep(1500);
             if (_productManagement.Remove(codeName))
             {
                 return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);

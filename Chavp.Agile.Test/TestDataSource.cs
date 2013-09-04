@@ -74,7 +74,7 @@ namespace Chavp.Agile.Test
                 .UsingFile("agile.db")
                 )
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
-                //.ExposeConfiguration(BuildSchema)
+                .ExposeConfiguration(BuildSchema)
                 .BuildSessionFactory();
         }
 

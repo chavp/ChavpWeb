@@ -10,7 +10,7 @@ namespace Chavp.Agile.UseCases
 
     public interface IProductManagement
     {
-        ProductDisplay GetProducts(int start, int limit);
+        ProductResult GetProducts(int start, int limit);
 
         bool Add(ProductDto p);
 
