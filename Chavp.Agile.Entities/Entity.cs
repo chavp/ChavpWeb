@@ -8,6 +8,6 @@ namespace Chavp.Agile.Entities
 {
     public abstract class Entity
     {
-        public virtual DateTime Version { get; set; }
+        public virtual DateTime Version { get; protected set; }
     }
 }

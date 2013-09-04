@@ -151,33 +151,36 @@
 @section scripts{
 <script>
     $(function () {
-        var newProductResultMessage = $('#new-product-result-message');
-        var editProductResultMessage = $('#edit-product-result-message');
-        var btnNewProduct = $('#btn-new-product');
-        var btnCloseProduct = $('#btn-close-new-product');
-        var btnEditProduct = $('#btn-edit-product');
-        var btnCancleEditProduct = $('#btn-cancle-edit-product');
+        var $newProductResultMessage = $('#new-product-result-message');
+        var $editProductResultMessage = $('#edit-product-result-message');
+        var $btnNewProduct = $('#btn-new-product');
+        var $btnCloseProduct = $('#btn-close-new-product');
+        var $btnEditProduct = $('#btn-edit-product');
+        var $btnCancleEditProduct = $('#btn-cancle-edit-product');
 
-        var pagingPre = $('#paging-pre');
-        var pagingNext = $('#paging-next');
+        var $pagingPre = $('#paging-pre');
+        var $pagingNext = $('#paging-next');
+
+        var $inputCodeName = $('#inputCodeName');
 
         var $newProductUI = $('#new-product');
         $newProductUI.live('shown.bs.modal', function () {
-            $('#inputCodeName').focus();
+            $inputCodeName.focus();
         });
 
         var $editProductUI = $('#edit-product');
 
-        newProductResultMessage.hide();
+        $newProductResultMessage.hide();
 
-        function Product(data) {
+        function ProductViewModel(data) {
             var self = this;
 
             self.CodeName = ko.observable();
             self.Brand = ko.observable();
             self.Name = ko.observable();
             self.Slogan = ko.observable();
-            self.Status = ko.observable();
+            self.Features = ko.observableArray();
+
             self.StatusDisplay = ko.observable();
             self.ResultMessage = ko.observable();
             self.cache = function () { };
@@ -194,11 +197,11 @@
             self.add = function () {
                 if (self.CodeName() === "") {
                     self.alertDangerMessage("Require Code Name!");
-                    $('#inputCodeName').focus();
+                    $inputCodeName.focus();
                     return false;
                 }
-                btnNewProduct.button("loading");
-                btnCloseProduct.attr("disabled", "disabled");
+                $btnNewProduct.button("loading");
+                $btnCloseProduct.attr("disabled", "disabled");
 
                 var data = ko.toJS(self);
                 data.CodeName = "P-" + data.CodeName.toUpperCase();
@@ -209,25 +212,25 @@
                     data: ko.toJSON(data),
                     dataType: 'json',
                     success: function (result) {
-                        btnNewProduct.button("reset");
-                        btnCloseProduct.removeAttr("disabled", "disabled");
+                        $btnNewProduct.button("reset");
+                        $btnCloseProduct.removeAttr("disabled", "disabled");
                         if (result.success) {
-                            proIndex.addProduct(new Product(result.data));
+                            _proIndex.addProduct(new ProductViewModel(result.data));
                             self.ResultMessage(result.message);
-                            newProductResultMessage.show();
-                            newProductResultMessage.removeClass();
-                            newProductResultMessage.addClass("alert alert-success");
-                            newProductResultMessage.effect("slide", {}, 300);
+                            $newProductResultMessage.show();
+                            $newProductResultMessage.removeClass();
+                            $newProductResultMessage.addClass("alert alert-success");
+                            $newProductResultMessage.effect("slide", {}, 300);
                             self.reset();
-                            proIndex.getProducts();
-                            $('#inputCodeName').focus();
+                            
+                            _proIndex.getProducts();
                         } else {
                             self.alertDangerMessage(result.message);
                         }
                     },
                     error: function (request, status, error) {
-                        btnNewProduct.button("reset");
-                        btnCloseProduct.removeAttr("disabled", "disabled");
+                        $btnNewProduct.button("reset");
+                        $btnCloseProduct.removeAttr("disabled", "disabled");
                         self.alertDangerMessage(error);
                     }
                 });
@@ -235,10 +238,10 @@
 
             self.alertDangerMessage = function (message) {
                 self.ResultMessage(message);
-                newProductResultMessage.show();
-                newProductResultMessage.removeClass();
-                newProductResultMessage.addClass("alert alert-danger");
-                newProductResultMessage.effect("bounce", {}, 300);
+                $newProductResultMessage.show();
+                $newProductResultMessage.removeClass();
+                $newProductResultMessage.addClass("alert alert-danger");
+                $newProductResultMessage.effect("bounce", {}, 300);
             }
 
             self.close = function () {
@@ -253,7 +256,9 @@
                 self.Brand("");
                 self.Name("");
                 self.Slogan("");
-                self.Status("");
+                self.StatusDisplay("");
+
+                $inputCodeName.focus();
             }
 
             self.cancle = function () {
@@ -262,12 +267,12 @@
                     self.saveChangeAjax.abort();
                 }
                 $editProductUI.modal('hide');
-                btnEditProduct.button("reset");
+                $btnEditProduct.button("reset");
             }
 
             self.saveChange = function () {
-                btnEditProduct.button("loading");
-                btnCancleEditProduct.attr("disabled", "disabled");
+                $btnEditProduct.button("loading");
+                $btnCancleEditProduct.attr("disabled", "disabled");
 
                 var data = ko.toJS(self);
                 self.saveChangeAjax = $.ajax({
@@ -277,33 +282,33 @@
                     data: ko.toJSON(data),
                     dataType: 'json',
                     success: function (result) {
-                        btnEditProduct.button("reset");
-                        btnCancleEditProduct.removeAttr("disabled");
+                        $btnEditProduct.button("reset");
+                        $btnCancleEditProduct.removeAttr("disabled");
 
                         if (result.success) {
                             self.commit();
                             self.ResultMessage(result.message);
-                            editProductResultMessage.removeClass();
-                            editProductResultMessage.addClass("alert alert-success");
-                            editProductResultMessage.show();
-                            editProductResultMessage.effect("slide", {}, 300);
+                            $editProductResultMessage.removeClass();
+                            $editProductResultMessage.addClass("alert alert-success");
+                            $editProductResultMessage.show();
+                            $editProductResultMessage.effect("slide", {}, 300);
                         } else {
                             self.ResultMessage(result.message);
-                            editProductResultMessage.show();
-                            editProductResultMessage.removeClass();
-                            editProductResultMessage.addClass("alert alert-danger");
-                            editProductResultMessage.effect("bounce", {}, 300);
+                            $editProductResultMessage.show();
+                            $editProductResultMessage.removeClass();
+                            $editProductResultMessage.addClass("alert alert-danger");
+                            $editProductResultMessage.effect("bounce", {}, 300);
                         }
                     },
                     error: function (request, status, error) {
-                        btnEditProduct.button("reset");
-                        btnCancleEditProduct.removeAttr("disabled");
-
                         self.ResultMessage(error);
-                        editProductResultMessage.show();
-                        editProductResultMessage.removeClass();
-                        editProductResultMessage.addClass("alert alert-danger");
-                        editProductResultMessage.effect("bounce", {}, 300);
+
+                        $btnEditProduct.button("reset");
+                        $btnCancleEditProduct.removeAttr("disabled");
+                        $editProductResultMessage.show();
+                        $editProductResultMessage.removeClass();
+                        $editProductResultMessage.addClass("alert alert-danger");
+                        $editProductResultMessage.effect("bounce", {}, 300);
                     }
                 });
             }
@@ -322,11 +327,9 @@
                         if (result.success) {
                             $('#' + self.getRowID()).animate(
                                 { opacity: 0 }, 700, function () {
-                                    proIndex.Products.remove(self);
+                                    _proIndex.Products.remove(self);
                                 });
 
-                            //proIndex.Page(1);
-                            //proIndex.getProducts();
                             if (completed !== undefined) {
                                 completed();
                             }
@@ -340,7 +343,7 @@
             }
         }
 
-        ko.utils.extend(Product.prototype, {
+        ko.utils.extend(ProductViewModel.prototype, {
             update: function (data) {
                 data = data || {};
 
@@ -348,7 +351,6 @@
                 this.Brand(data.Brand);
                 this.Name(data.Name);
                 this.Slogan(data.Slogan);
-                this.Status(data.Status);
                 this.StatusDisplay(data.StatusDisplay);
                 this.ResultMessage(data.ResultMessage);
 
@@ -362,6 +364,17 @@
                 this.cache.latestData = ko.toJS(this);
             }
         });
+
+        function FeatureViewModel(data) {
+            var self = this;
+
+            self.CodeName = ko.observable();
+            self.Name = ko.observable();
+            self.Description = ko.observable();
+            self.Action = ko.observable();
+            self.Result = ko.observable();
+            self.Object = ko.observable();
+        }
 
         function ProductIndex(data) {
             var self = this;
@@ -389,14 +402,14 @@
             }
 
             self.newProduct = function () {
-                newProductResultMessage.hide();
+                $newProductResultMessage.hide();
 
                 ko.cleanNode($newProductUI[0]);
-                ko.applyBindings(new Product(), $newProductUI[0]);
+                ko.applyBindings(new ProductViewModel(), $newProductUI[0]);
             }
 
             self.edit = function (p) {
-                editProductResultMessage.hide();
+                $editProductResultMessage.hide();
                 p.ResultMessage("");
                 ko.cleanNode($editProductUI[0]);
                 ko.applyBindings(p, $editProductUI[0]);
@@ -419,7 +432,10 @@
                     url: '@Url.Action("GetProducts")',
                     contentType: 'application/json',
                     type: "GET",
-                    data: { index: self.PageIndex(), limit: self.Limit() },
+                    data: {
+                        index: self.PageIndex(),
+                        limit: self.Limit()
+                    },
                     dataType: 'json',
                     success: function (result) {
                         if (result.success) {
@@ -428,7 +444,7 @@
                             self.Products.removeAll();
 
                             for (var i = 0; i < result.data.length; i++) {
-                                var p = new Product(result.data[i]);
+                                var p = new ProductViewModel(result.data[i]);
                                 self.addProduct(p);
                             }
 
@@ -445,23 +461,23 @@
                                 }
                             }
                             
-                            pagingNext.removeClass("disabled");
-                            pagingPre.removeClass("disabled");
+                            $pagingNext.removeClass("disabled");
+                            $pagingPre.removeClass("disabled");
                             
                             if (pageSize <= 1) {
-                                pagingPre.addClass("disabled");
-                                pagingNext.addClass("disabled");
+                                $pagingPre.addClass("disabled");
+                                $pagingNext.addClass("disabled");
                             } else {
                                 if (self.Page() === 1) {
-                                    pagingPre.addClass("disabled");
+                                    $pagingPre.addClass("disabled");
                                 } else if (self.LastPage() === self.Page()) {
-                                    pagingNext.addClass("disabled");
+                                    $pagingNext.addClass("disabled");
                                 }
                             }
                         }
                     },
                     error: function (request, status, error) {
-                        console.log(error);
+                        alert(error);
                     }
                 });
             }
@@ -500,12 +516,12 @@
             }
         });
 
-        var proIndex = new ProductIndex({
-            Limit: 4
+        var _proIndex = new ProductIndex({
+            //Limit: 4
         });
-        proIndex.getProducts();
+        _proIndex.getProducts();
 
-        ko.applyBindings(proIndex, $('#product-list')[0]);
+        ko.applyBindings(_proIndex, $('#product-list')[0]);
 
     });
 </script>

@@ -9,11 +9,10 @@ namespace Chavp.Agile.Entities
     public class Feature
         : Entity
     {
-        List<Product> _Products;
 
-        protected Feature()
+        public Feature()
         {
-            _Products = new List<Product>();
+            Products = new List<Product>();
         }
 
         public Feature(string codeName)
@@ -22,7 +21,7 @@ namespace Chavp.Agile.Entities
             CodeName = codeName;
         }
 
-        public virtual string CodeName { get; protected set; }
+        public virtual string CodeName { get; set; }
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }
 
@@ -42,17 +41,6 @@ namespace Chavp.Agile.Entities
         public virtual string Object { get; set; }
 
 
-        public virtual IList<Product> Products 
-        {
-            get
-            {
-                return _Products.AsReadOnly();
-            }
-
-            protected set
-            {
-                _Products = new List<Product>(value);
-            }
-        }
+        public virtual IList<Product> Products { get; set; }
     }
 }

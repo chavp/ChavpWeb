@@ -1,27 +1,33 @@
-﻿using Chavp.Agile.Entities.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chavp.Agile.Entities
+namespace Chavp.Agile.UseCases
 {
-    public class ProductService
-        : IProductService
+    using Chavp.Agile.Entities;
+    using Chavp.Agile.Entities.Attributes;
+    using Chavp.Agile.UseCases.Data;
+
+    /// <summary>
+    /// http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html
+    /// </summary>
+    public class ProductManagement
+        : IProductManagement
     {
         IProductRepository _productRepository;
-        public ProductService(IProductRepository productRepository)
+        public ProductManagement(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
         [UnitOfWork]
-        public ProductResult GetProducts(int pageIndex, int limit)
+        public ProductDisplay GetProducts(int pageIndex, int limit)
         {
             int total;
             var models = _productRepository.Filter(null, out total, pageIndex, limit).ToList();
-            var result = new ProductResult
+            var result = new ProductDisplay
             {
                 Total = total,
                 Products = new List<ProductDto>(),
@@ -94,31 +100,5 @@ namespace Chavp.Agile.Entities
             }
             return false;
         }
-    }
-
-    public interface IProductService
-    {
-        ProductResult GetProducts(int start, int limit);
-
-        bool Add(ProductDto p);
-
-        bool Save(ProductDto p);
-
-        bool Remove(string codeName);
-    }
-
-    public class ProductResult
-    {
-        public int Total { get; set; }
-        public IList<ProductDto> Products { get; set; }
-    }
-
-    public class ProductDto
-    {
-        public string CodeName { get; set; }
-        public string Brand { get; set; }
-        public string Name { get; set; }
-        public string Slogan { get; set; }
-        public string StatusDisplay { get; set; }
     }
 }

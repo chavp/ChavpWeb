@@ -487,6 +487,10 @@
       <Project>{c9f421c2-02e9-4878-9d12-092226bd7f60}</Project>
       <Name>Chavp.Agile.Mappings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Chavp.Agile.UseCases\Chavp.Agile.UseCases.csproj">
+      <Project>{7e2c202f-72b3-493e-ba7c-e1b0192fd2c4}</Project>
+      <Name>Chavp.Agile.UseCases</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

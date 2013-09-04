@@ -16,6 +16,7 @@ namespace Web.Installers
     using FluentNHibernate.Cfg.Db;
     using System.Web.Hosting;
     using Chavp.Agile.Entities.Attributes;
+    using Chavp.Agile.UseCases;
 
     public class ControllersInstaller : IWindsorInstaller
     {
@@ -31,8 +32,8 @@ namespace Web.Installers
                     LifestyleTransient(),
 
                 // Service
-                Component.For<IProductService>()
-                .ImplementedBy<ProductService>()
+                Component.For<IProductManagement>()
+                .ImplementedBy<ProductManagement>()
                 .LifeStyle.Transient,
 
                 // Nhibernate session factory

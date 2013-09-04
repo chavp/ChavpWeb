@@ -138,19 +138,23 @@
 
     <script>
         $(function () {
-            function UserViewModel(data) {
-                var self = this;
-                data = data || {};
+            @if(Request.IsAuthenticated)
+            {
+                <text>
+                function UserViewModel(data) {
+                    var self = this;
+                    data = data || {};
 
-                self.Name = ko.observable(data.Name);
-                self.Roles = ko.observable(data.Roles);
+                    self.Name = ko.observable(data.Name);
+                    self.Roles = ko.observable(data.Roles);
+                }
+                var data = {Name: "@User.Identity.Name", Roles: "@string.Join(",", Roles.GetRolesForUser())"};
+                var userVM = new UserViewModel(data);
+
+                ko.applyBindings(userVM, $('#signin-info')[0]);
+                ko.applyBindings(userVM, $('#profile')[0]);
+                </text>
             }
-
-            var data = {Name: "@User.Identity.Name", Roles: "@string.Join(",", Roles.GetRolesForUser())"};
-            var userVM = new UserViewModel(data);
-
-            ko.applyBindings(userVM, $('#signin-info')[0]);
-            ko.applyBindings(userVM, $('#profile')[0]);
         });
     </script>
 

@@ -12,15 +12,17 @@ namespace Web.Controllers
     using Chavp.Agile.Entities;
     using Chavp.Agile.Entities.Attributes;
     using Chavp.Agile.Mappings;
+    using Chavp.Agile.UseCases;
+    using Chavp.Agile.UseCases.Data;
     using Web.Interceptors;
 
     [Authorize]
     public class ProductsController : Controller
     {
-        IProductService _productService;
-        public ProductsController(IProductService productService)
+        IProductManagement _productManagement;
+        public ProductsController(IProductManagement productManagement)
         {
-            _productService = productService;
+            _productManagement = productManagement;
         }
 
         public ActionResult Index()
@@ -31,17 +33,17 @@ namespace Web.Controllers
         [HttpGet]
         public ActionResult GetProducts(int index, int limit)
         {
-            var result = _productService.GetProducts(index, limit);
+            var result = _productManagement.GetProducts(index, limit);
 
             return Json(new { success = true, data = result.Products, message = "", total = result.Total }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public JsonResult Add(Product p)
+        public JsonResult Add(ProductDto p)
         {
             Thread.Sleep(1500);
 
-            if (_productService.Add(p))
+            if (_productManagement.Add(p))
             {
                 return Json(new { success = true, data = p, message = string.Format("Adding {0} completed.", p.CodeName) }, JsonRequestBehavior.AllowGet);
             }
@@ -52,10 +54,10 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Save(Product p)
+        public JsonResult Save(ProductDto p)
         {
             Thread.Sleep(1500);
-            if (_productService.Save(p))
+            if (_productManagement.Save(p))
             {
                 return Json(new { success = true, data = p, message = "Save completed." }, JsonRequestBehavior.AllowGet);
             }
@@ -69,7 +71,7 @@ namespace Web.Controllers
         public JsonResult Remove(string codeName)
         {
             Thread.Sleep(1500);
-            if (_productService.Remove(codeName))
+            if (_productManagement.Remove(codeName))
             {
                 return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
             }

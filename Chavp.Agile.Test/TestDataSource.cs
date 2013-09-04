@@ -55,11 +55,13 @@ namespace Chavp.Agile.Test
             var productRepo = new ProductRepository();
             var products = productRepo.All().ToList();
 
-            //products.ForEach(p =>
-            //{
-            //    p.AddFeature(new Feature("F-" + p.CodeName));
-            //    Console.WriteLine(p.CodeName);
-            //});
+            products.ForEach(p =>
+            {
+                var f = p.Features.First();
+                p.Features.Remove(f);
+                //p.AddFeature(new Feature("F-" + p.CodeName));
+                //Console.WriteLine(p.CodeName);
+            });
 
             uow.Commit();
         }
