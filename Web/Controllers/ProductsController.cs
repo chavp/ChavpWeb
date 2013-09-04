@@ -8,11 +8,20 @@ using Web.Models;
 
 namespace Web.Controllers
 {
+    using Castle.Core;
+    using Chavp.Agile.Entities;
+    using Chavp.Agile.Entities.Attributes;
+    using Chavp.Agile.Mappings;
+    using Web.Interceptors;
+
     [Authorize]
     public class ProductsController : Controller
     {
-        //
-        // GET: /Products/
+        IProductService _productService;
+        public ProductsController(IProductService productService)
+        {
+            _productService = productService;
+        }
 
         public ActionResult Index()
         {
@@ -22,23 +31,18 @@ namespace Web.Controllers
         [HttpGet]
         public ActionResult GetProducts(int start, int limit)
         {
-            var total = MvcApplication.Products.Count;
-            var result = MvcApplication.Products.Skip(start).Take(limit).ToList();
+            var result = _productService.GetProducts(start, limit);
 
-            return Json(new { success = true, data = result, message = "", total = total }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, data = result.Products, message = "", total = result.Total }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         public JsonResult Add(Product p)
         {
             Thread.Sleep(1500);
-            var uniqQuery = from x in MvcApplication.Products
-                            where x.CodeName == p.CodeName
-                            select x;
-            if (uniqQuery.Count() == 0)
+
+            if (_productService.Add(p))
             {
-                p.Status = EProductStatus.Concept;
-                MvcApplication.Products.Add(p);
                 return Json(new { success = true, data = p, message = string.Format("Adding {0} completed.", p.CodeName) }, JsonRequestBehavior.AllowGet);
             }
             else
@@ -51,33 +55,28 @@ namespace Web.Controllers
         public JsonResult Save(Product p)
         {
             Thread.Sleep(1500);
-            var uniqQuery = from x in MvcApplication.Products
-                            where x.CodeName == p.CodeName
-                            select x;
-            if (uniqQuery.Count() > 0)
+            if (_productService.Save(p))
             {
-                var oldProduc = uniqQuery.Single();
-                oldProduc.Brand = p.Brand;
-                oldProduc.Name = p.Name;
-                oldProduc.Slogan = p.Slogan;
+                return Json(new { success = true, data = p, message = "Save completed." }, JsonRequestBehavior.AllowGet);
             }
-            return Json(new { success = true, data = p, message = "Save completed." }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                return Json(new { success = false, message = "Ivalid Product in this system." }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]
         public JsonResult Remove(string codeName)
         {
             Thread.Sleep(1500);
-            var uniqQuery = from x in MvcApplication.Products
-                            where x.CodeName == codeName
-                            select x;
-            if (uniqQuery.Count() > 0)
+            if (_productService.Remove(codeName))
             {
-                var oldProduc = uniqQuery.Single();
-                MvcApplication.Products.Remove(oldProduc);
+                return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
             }
-
-            return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                return Json(new { success = true, data = codeName, message = "Ivalid Product in this system." }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Castle.Facilities.NHibernate</id>
+    <version>0.7.1.23602</version>
+    <title>Castle NHibernate Facility</title>
+    <authors>Henrik Feldt</authors>
+    <owners>Henrik Feldt</owners>
+    <licenseUrl>https://github.com/haf/Castle.Facilities.NHibernate/raw/develop/License.txt</licenseUrl>
+    <projectUrl>https://github.com/haf/Castle.Facilities.NHibernate</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Easy NHibernate integration with declarative transactions using Castle Transaction Services and .Net System.Transactions. Integrate Transactional NTFS with NHibernate and database transactions, or choose methods to fork dependent transactions for to run your transaction constituents in parallel. The NHibernate Facility is configured using FluentNHibernate</description>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="Castle.Core" version="3.0.0.4001" />
+      <dependency id="Castle.Windsor" version="3.0.0.4001" />
+      <dependency id="Castle.FactorySupportFacility" version="3.0.0.4001" />
+      <dependency id="Castle.Transactions" version="3.1.0.18015" />
+      <dependency id="Castle.Facilities.AutoTx" version="3.1.0.18015" />
+      <dependency id="FluentNHibernate" version="1.3.0.733" />
+      <dependency id="NHibernate" version="3.3.1.4000" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Transactions" targetFramework=".NETFramework4.0" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Castle.Facilities.NHibernate.dll" />
+    </references>
+  </metadata>
+</package>

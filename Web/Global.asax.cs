@@ -11,15 +11,24 @@ using Web.Models;
 
 namespace Web
 {
+    using Castle.Core;
+    using Castle.MicroKernel.Registration;
+    using Castle.Windsor;
+    using Castle.Windsor.Installer;
+    using Chavp.Agile.Entities;
+    using Web.Installers;
+    using Web.Interceptors;
+    using Web.Plumbing;
+
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        private IWindsorContainer _container;
+
         public static IDictionary<string, User> Members { get; set; }
         public static IDictionary<string, string[]> UserRoleDic { get; set; }
-
-        public static IList<Product> Products { get; set; }
 
         protected void Application_Start()
         {
@@ -31,6 +40,13 @@ namespace Web
             //BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             BootstrapConfig.RegisterBundles(BundleTable.Bundles);
+
+            _container = new WindsorContainer();
+
+            _container.Install(new ControllersInstaller());
+
+            ControllerBuilder.Current.SetControllerFactory(
+                new WindsorControllerFactory(_container.Kernel));
 
             Members = new Dictionary<string, User>();
             var chavp = new User
@@ -45,32 +61,13 @@ namespace Web
 
             UserRoleDic.Add(chavp.Name, new string[]{"admin"});
 
-            Products = new List<Product>();
+        }
 
-            //Products.Add(new Product
-            //{
-            //    Brand = "Chavp",
-            //    CodeName = "P-MOCKUP",
-            //    Name = "Hello, World.",
-            //    Slogan = "It's simple.",
-            //    Status = EProductStatus.Concept,
-            //});
-            //Products.Add(new Product
-            //{
-            //    Brand = "Chavp",
-            //    CodeName = "P-CAL",
-            //    Name = "ChavpCal.",
-            //    Slogan = "Calculate Baby",
-            //    Status = EProductStatus.Concept,
-            //});
-            for (int i = 1; i <= 10; i++)
+        protected void Application_End()
+        {
+            if (_container != null)
             {
-                Products.Add(new Product
-                {
-                    Brand = "#:P",
-                    CodeName = string.Format("P-{0}", i),
-                    Status = EProductStatus.Concept,
-                });
+                _container.Dispose();
             }
         }
 

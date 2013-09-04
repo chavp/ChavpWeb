@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Castle.Transactions</id>
+    <version>3.1.206.2206</version>
+    <title>Castle Transactions</title>
+    <authors>Henrik Feldt</authors>
+    <owners>Henrik Feldt</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/castleproject/Castle.Transactions</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Castle Transactions enables a common interface to both .Net Transactions with LTM/Lightweight Transaction Manager.</description>
+    <language>en-US</language>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Transactions" targetFramework=".NETFramework4.0" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Castle.Transactions.dll" />
+    </references>
+  </metadata>
+</package>
