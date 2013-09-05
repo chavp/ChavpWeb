@@ -9,7 +9,7 @@ namespace Chavp.Agile.Entities
     public class Product
         : Entity
     {
-        protected Product()
+        public Product()
         {
             Features = new List<Feature>();
         }

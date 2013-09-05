@@ -38,11 +38,12 @@ namespace Chavp.Agile.UseCases
                 .All()
                 .OrderByDescending(p => p.Created)
                 .Skip(pageIndex * limit)
-                .Take( limit )
-                .Project()
+                .Take(limit)
+                .Project<Product>()
                 .To<ProductDto>()
                 .ToList();
 
+            
             var result = new ProductResult
             {
                 Total = total,

@@ -1,6 +1,7 @@
 ﻿@using Newtonsoft.Json
 
 @{
+    // http://tutorialzine.com/2013/07/50-must-have-plugins-for-extending-twitter-bootstrap/
     ViewBag.Title = "Products";
 }
 
@@ -481,6 +482,9 @@
                             }
 
                             var pageSize = Math.ceil(self.Total() / self.Limit());
+                            if (self.Total() == 1) {
+                                self.Page(1);
+                            }
                             if (self.Page() > pageSize) {
                                 self.Page(self.Page() - 1);
                             }
@@ -548,7 +552,7 @@
         });
 
         var _proIndex = new ProductIndex({
-            //Limit: 5
+            //Limit: 2
         });
         _proIndex.getProducts();
 

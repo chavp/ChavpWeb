@@ -15,15 +15,15 @@ namespace Chavp.Agile.UseCases
         public static void Configure()
         {
             Mapper.CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.StatusDisplay, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.StatusDisplay,
+                opt => opt.MapFrom(src => src.Status.ToString()));
 
             Mapper.CreateMap<ProductDto, Product>()
                 .ForMember(dest => dest.Created, opt => opt.Ignore())
-                .ForMember(dest => dest.Version, opt => opt.Ignore())
                 .ForMember(dest => dest.Features, opt => opt.Ignore())
-                .ForMember(dest => dest.Status, opt => 
-                    opt.MapFrom(src => (EProductStatus)Enum.Parse(typeof(EProductStatus), 
-                        (string.IsNullOrEmpty(src.StatusDisplay) ? "Concept" : src.StatusDisplay))));
+                .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(src => 
+                    (string.IsNullOrEmpty(src.StatusDisplay) ? EProductStatus.Concept : (EProductStatus)Enum.Parse(typeof(EProductStatus), src.StatusDisplay))));
 
             Mapper.AssertConfigurationIsValid();
         }

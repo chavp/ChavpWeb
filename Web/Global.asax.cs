@@ -16,6 +16,7 @@ namespace Web
     using Castle.Windsor;
     using Castle.Windsor.Installer;
     using Chavp.Agile.Entities;
+    using Chavp.Agile.UseCases;
     using Web.Installers;
     using Web.Interceptors;
     using Web.Plumbing;
@@ -60,6 +61,7 @@ namespace Web
             UserRoleDic = new Dictionary<string, string[]>();
 
             UserRoleDic.Add(chavp.Name, new string[]{"admin"});
+
 
         }
 
