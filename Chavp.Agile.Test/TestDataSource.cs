@@ -34,11 +34,13 @@ namespace Chavp.Agile.Test
 
             for (int i = 0; i < 10; i++)
             {
-                var p = new Product(string.Format("P-{0}", i))
+                var p = new Product()
                 {
+                    Name = i.ToString(),
+                    Brand = "B",
                 };
 
-                productRepo.SaveOrUpdate(p);
+                productRepo.Save(p);
             }
 
             uow.Commit();
@@ -74,7 +76,7 @@ namespace Chavp.Agile.Test
                 .UsingFile("agile.db")
                 )
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductMap>())
-                .ExposeConfiguration(BuildSchema)
+                //.ExposeConfiguration(BuildSchema)
                 .BuildSessionFactory();
         }
 

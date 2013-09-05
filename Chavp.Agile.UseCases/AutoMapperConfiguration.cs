@@ -15,6 +15,8 @@ namespace Chavp.Agile.UseCases
         public static void Configure()
         {
             Mapper.CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.Id,
+                opt => opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(dest => dest.StatusDisplay,
                 opt => opt.MapFrom(src => src.Status.ToString()));
 

@@ -13,9 +13,8 @@
         <table class="table table-condensed table-hover">
             <thead>
                 <tr>
-                    <th class="col-md-2">CodeName</th>
-                    <th class="col-md-2">Brand</th>
-                    <th class="col-md-2">Name</th>
+                    <th class="col-md-3">Brand</th>
+                    <th class="col-md-3">Name</th>
                     <th class="col-md-3">Slogan</th>
                     <th class="col-md-1">Status</th>
                     <th class="col-md-2">Actions</th>
@@ -23,7 +22,6 @@
             </thead>
             <tbody data-bind="foreach: Products">
                 <tr data-bind="attr: { id: getRowID() }">
-                    <td><span data-bind="text: CodeName"></span></td>
                     <td><span data-bind="text: Brand"></span></td>
                     <td><span data-bind="text: Name"></span></td>
                     <td><span data-bind="text: Slogan"></span></td>
@@ -55,18 +53,9 @@
             <div class="modal-body">
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
-                        <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
-                        <div class="col-lg-9">
-                            <div class="input-group">
-                            <span class="input-group-addon">P-</span>
-                            <input data-bind="value: CodeName" type="text" class="form-control active text-uppercase" id="inputCodeName" placeholder="Code Name" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="inputBrand" class="col-lg-3 control-label">Brand</label>
                         <div class="col-lg-9">
-                            <input data-bind="value: Brand" type="text" class="form-control" id="inputBrand" placeholder="Brand" />
+                            <input data-bind="value: Brand" type="text" class="form-control active" id="inputBrand" placeholder="Brand" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -118,12 +107,6 @@
             <div class="modal-body">
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
-                        <label for="inputCodeName" class="col-lg-3 control-label">Code Name</label>
-                        <div class="col-lg-9">
-                            <input data-bind="value: CodeName" type="text" class="form-control text-uppercase" id="editCodeName" placeholder="Code Name" disabled/>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="inputBrand" class="col-lg-3 control-label">Brand</label>
                         <div class="col-lg-9">
                             <input data-bind="value: Brand" type="text" class="form-control" id="editBrand" placeholder="Brand" />
@@ -165,7 +148,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>CodeName</th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Action</th>
@@ -205,12 +187,14 @@
         var $pagingPre = $('#paging-pre');
         var $pagingNext = $('#paging-next');
 
-        var $inputCodeName = $('#inputCodeName');
+        var $inputBrand = $('#inputBrand');
+        var $inputName = $('#inputName');
+
         var $productList = $('#product-list');
 
         var $newProductUI = $('#new-product');
         $newProductUI.live('shown.bs.modal', function () {
-            $inputCodeName.focus();
+            $inputBrand.focus();
         });
 
         var $editProductUI = $('#edit-product');
@@ -220,7 +204,7 @@
         function ProductViewModel(data) {
             var self = this;
 
-            self.CodeName = ko.observable();
+            self.Id = ko.observable();
             self.Brand = ko.observable();
             self.Name = ko.observable();
             self.Slogan = ko.observable();
@@ -232,24 +216,29 @@
             self.update(data);
 
             self.getBtnActionsID = function () {
-                return "btn-actions-" + self.CodeName();
+                return "btn-actions-" + self.Id();
             }
 
             self.getRowID = function () {
-                return "row-" + self.CodeName();
+                return "row-" + self.Id();
             }
 
             self.add = function () {
-                if (self.CodeName() === "") {
-                    self.alertDangerMessage("Require Code Name!");
-                    $inputCodeName.focus();
+                if (self.Brand() === "") {
+                    self.alertDangerMessage("Require Brand!");
+                    $inputBrand.focus();
+                    return false;
+                }
+                if (self.Name() === "") {
+                    self.alertDangerMessage("Require Name!");
+                    $inputName.focus();
                     return false;
                 }
                 $btnNewProduct.button("loading");
                 $btnCloseProduct.attr("disabled", "disabled");
 
                 var data = ko.toJS(self);
-                data.CodeName = "P-" + data.CodeName.toUpperCase();
+                
                 self.addAjax = $.ajax({
                     url: '@Url.Action("Add")',
                     contentType: 'application/json',
@@ -297,13 +286,12 @@
             }
 
             self.reset = function () {
-                self.CodeName("");
                 self.Brand("");
                 self.Name("");
                 self.Slogan("");
                 self.StatusDisplay("");
 
-                $inputCodeName.focus();
+                $inputBrand.focus();
             }
 
             self.cancle = function () {
@@ -359,14 +347,14 @@
             }
 
             self.remove = function (completed) {
-                var codeName = self.CodeName();
+                var id = self.Id();
                 $('#' + self.getBtnActionsID()).hide(100);
 
                 self.removeAjax = $.ajax({
                     url: '@Url.Action("Remove")',
                     contentType: 'application/json',
                     type: "POST",
-                    data: ko.toJSON({ codeName: codeName }),
+                    data: ko.toJSON({ Id: id }),
                     dataType: 'json',
                     success: function (result) {
                         if (result.success) {
@@ -392,7 +380,7 @@
             update: function (data) {
                 data = data || {};
 
-                this.CodeName(data.CodeName || "");
+                this.Id(data.Id || "");
                 this.Brand(data.Brand);
                 this.Name(data.Name);
                 this.Slogan(data.Slogan);

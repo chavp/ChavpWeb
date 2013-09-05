@@ -45,11 +45,11 @@ namespace Web.Controllers
 
             if (_productManagement.Add(p))
             {
-                return Json(new { success = true, data = p, message = string.Format("Adding {0} completed.", p.CodeName) }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = p, message = string.Format("Adding {0}, {1} completed.", p.Brand, p.Name) }, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json(new { success = false, message = "Already have a code name." }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = false, message = "Already have a brand and name." }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -68,16 +68,16 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Remove(string codeName)
+        public JsonResult Remove(string id)
         {
            // Thread.Sleep(1500);
-            if (_productManagement.Remove(codeName))
+            if (_productManagement.Remove(id))
             {
-                return Json(new { success = true, data = codeName, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = id, message = "Remove completed." }, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json(new { success = true, data = codeName, message = "Ivalid Product in this system." }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = id, message = "Ivalid Product in this system." }, JsonRequestBehavior.AllowGet);
             }
         }
     }

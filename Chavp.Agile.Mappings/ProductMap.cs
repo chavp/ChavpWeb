@@ -10,21 +10,14 @@ namespace Chavp.Agile.Mappings
     using FluentNHibernate.Mapping;
 
     public class ProductMap
-        : ClassMap<Product>
+        : EntityMap<Product>
     {
         public ProductMap()
         {
             Table("Products");
 
-            Id(x => x.CodeName);
-            OptimisticLock.Version();
-            Version(x => x.Version)
-                .CustomType("Timestamp");
-
-            Map(x => x.Created).Not.Nullable();
-
-            Map(x => x.Brand);
-            Map(x => x.Name);
+            Map(x => x.Name).UniqueKey("namespace");
+            Map(x => x.Brand).UniqueKey("namespace");
             Map(x => x.Slogan);
             Map(x => x.Status);
 

@@ -10,9 +10,11 @@ namespace Chavp.Agile.Entities
     {
         public Entity()
         {
+            Id = Guid.NewGuid();
             Created = DateTime.Now;
         }
 
+        public virtual Guid Id { get; protected set; }
         public virtual DateTime Created { get; protected set; }
         public virtual DateTime Version { get; protected set; }
     }

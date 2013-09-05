@@ -14,13 +14,6 @@ namespace Chavp.Agile.Entities
             Features = new List<Feature>();
         }
 
-        public Product(string codeName) 
-            : this()
-        {
-            CodeName = codeName;
-        }
-
-        public virtual string CodeName { get; protected set; }
         public virtual string Brand { get; set; }
         public virtual string Name { get; set; }
         public virtual string Slogan { get; set; }

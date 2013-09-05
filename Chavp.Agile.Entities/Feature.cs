@@ -13,18 +13,11 @@ namespace Chavp.Agile.Entities
         : Entity
     {
 
-        protected Feature()
+        public Feature()
         {
             Products = new List<Product>();
         }
 
-        public Feature(string codeName)
-            : this()
-        {
-            CodeName = codeName;
-        }
-
-        public virtual string CodeName { get; protected set; }
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }
 

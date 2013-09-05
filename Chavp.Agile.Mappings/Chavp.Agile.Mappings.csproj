@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityMap.cs" />
     <Compile Include="FeatureMap.cs" />
     <Compile Include="FeatureRepository.cs" />
     <Compile Include="ProductMap.cs" />

@@ -10,19 +10,13 @@ namespace Chavp.Agile.Mappings
     using FluentNHibernate.Mapping;
 
     public class FeatureMap
-        : ClassMap<Feature>
+        : EntityMap<Feature>
     {
         public FeatureMap()
         {
             Table("Features");
 
-            Id(x => x.CodeName);
-            Version(x => x.Version)
-                .CustomType("Timestamp");
-
-            Map(x => x.Created).Not.Nullable();
-
-            Map(x => x.Name);
+            Map(x => x.Name).Unique();
             Map(x => x.Description);
 
             Map(x => x.Action);

@@ -57,7 +57,8 @@ namespace Chavp.Agile.UseCases
         public bool Add(ProductDto p)
         {
             var uniqQuery = from x in _productRepository.All()
-                            where x.CodeName == p.CodeName
+                            where x.Name == p.Name
+                            && x.Brand == p.Brand
                             select x;
             var m = uniqQuery.FirstOrDefault();
             if (m == null)
@@ -81,14 +82,13 @@ namespace Chavp.Agile.UseCases
         public bool Save(ProductDto p)
         {
             var uniqQuery = from x in _productRepository.All()
-                            where x.CodeName == p.CodeName
+                            where x.Name == p.Name
+                            && x.Brand == p.Brand
                             select x;
             var m = uniqQuery.FirstOrDefault();
 
             if (m != null)
             {
-                m.Brand = p.Brand;
-                m.Name = p.Name;
                 m.Slogan = p.Slogan;
                 return true;
             }
@@ -96,10 +96,10 @@ namespace Chavp.Agile.UseCases
         }
 
         [UnitOfWork]
-        public bool Remove(string codeName)
+        public bool Remove(string id)
         {
             var uniqQuery = from x in _productRepository.All()
-                            where x.CodeName == codeName
+                            where x.Id == Guid.Parse(id)
                             select x;
             if (uniqQuery.Count() > 0)
             {
